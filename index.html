@@ -1,0 +1,1000 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8f3">
+  <title>My Sign | Find a Sign Language Tutor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f7f8f3;
+      --white: #fff;
+      --ink: #172d29;
+      --muted: #71807a;
+      --line: #e5e9e2;
+      --green: #17614b;
+      --green-dark: #104d3b;
+      --green-soft: #e4f0e8;
+      --gold: #e2b850;
+      --red: #ca634f;
+      --shadow: 0 16px 46px rgb(17 45 35 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "DM Sans", sans-serif; font-size: 14px; }
+    button, input, select, textarea { font: inherit; }
+    button { color: inherit; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #89c0a3; outline-offset: 2px; }
+    .shell { width: min(1380px, 100%); margin: auto; padding: 0 38px; }
+
+    .topbar { display: flex; align-items: center; justify-content: space-between; height: 73px; border-bottom: 1px solid var(--line); }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-size: 17px; font-weight: 700; }
+    .brand-mark { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 50%; background: var(--green); color: #fff; font-family: Georgia, serif; font-size: 18px; }
+    .brand-mark span { color: var(--gold); }
+    .top-nav { display: flex; align-items: center; gap: 27px; }
+    .top-nav a { color: #596962; font-size: 12px; text-decoration: none; }
+    .top-nav a:hover { color: var(--green); }
+    .top-actions { display: flex; align-items: center; gap: 10px; }
+    .account-pill { max-width: 145px; overflow: hidden; color: #53655b; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .account-pill { padding: 7px 9px; border: 1px solid var(--line); border-radius: 5px; background: white; cursor: pointer; }
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 15px; border: 1px solid transparent; border-radius: 5px; background: var(--green); color: #fff; font-size: 12px; font-weight: 700; text-decoration: none; cursor: pointer; transition: background 150ms ease, transform 150ms ease; }
+    .button:hover { transform: translateY(-1px); background: var(--green-dark); }
+    .button.outline { border-color: var(--line); background: var(--white); color: var(--ink); }
+    .button.outline:hover { background: #f0f3ee; }
+    .button.gold { background: #d4a832; color: #253426; }
+    .button.gold:hover { background: #c3982c; }
+    .button.small { min-height: 34px; padding: 0 12px; font-size: 11px; }
+
+    .hero { margin: 38px 0 17px; padding: 0 0 24px; border-bottom: 1px solid var(--line); }
+    .hero-copy { max-width: 760px; }
+    .overline { margin: 0 0 10px; color: var(--green); font-size: 10px; font-weight: 700; letter-spacing: 1px; }
+    h1 { max-width: 650px; margin: 0 0 9px; font-size: 36px; font-weight: 700; line-height: 1.15; }
+    .hero-copy > p:not(.overline) { max-width: 620px; margin: 0 0 18px; color: var(--muted); font-size: 13px; line-height: 1.65; }
+    .hero-search { display: flex; max-width: 690px; gap: 8px; }
+    .hero-search .search-wrap { flex: 1; }
+    .hero-search .search-input { width: 100%; height: 46px; font-size: 13px; }
+    .hero-search .button { min-height: 46px; padding-inline: 20px; }
+    .hero-link { margin-top: 14px; padding: 0; border: 0; background: transparent; color: var(--green); font-size: 11px; font-weight: 700; cursor: pointer; }
+
+    .browse { padding: 27px 0 65px; scroll-margin-top: 20px; }
+    .browse .section-kicker { margin-bottom: 5px; }
+    .browse h2 { font-size: 20px; }
+    .browse-head { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 19px; }
+    .section-kicker { margin: 0 0 6px; color: var(--green); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+    h2 { margin: 0; font-size: 22px; }
+    .section-intro { margin: 6px 0 0; color: var(--muted); font-size: 11px; }
+    .browse-tools { display: flex; align-items: center; gap: 9px; }
+    .search-wrap { position: relative; }
+    .search-icon { position: absolute; top: 50%; left: 11px; color: #74817b; transform: translateY(-50%); }
+    .search-input { width: 285px; height: 42px; padding: 0 11px 0 32px; border: 1px solid var(--line); border-radius: 5px; background: var(--white); color: var(--ink); font-size: 12px; }
+    .sort-select { height: 38px; padding: 0 11px; border: 1px solid var(--line); border-radius: 5px; background: var(--white); color: var(--ink); font-size: 11px; }
+    .filter-row { display: flex; align-items: center; gap: 7px; overflow-x: auto; padding: 2px 0 15px; }
+    .filter { flex: 0 0 auto; min-height: 30px; padding: 0 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--white); color: #56665e; font-size: 10px; cursor: pointer; }
+    .filter[aria-pressed="true"] { border-color: var(--green); background: var(--green); color: white; }
+    .filter-label { margin-right: 4px; color: #88938d; font-size: 10px; }
+
+    .lesson-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 17px; }
+    .lesson-card { overflow: hidden; border: 1px solid var(--line); border-radius: 7px; background: var(--white); animation: lift-in 340ms ease both; }
+    @keyframes lift-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+    .lesson-cover { position: relative; aspect-ratio: 2.1; overflow: hidden; background: #dde6d9; }
+    .lesson-cover-placeholder { display: grid; width: 100%; height: 100%; place-items: center; }
+    .lesson-cover-placeholder.pattern-sage { background-color: #e3eee6; background-image: repeating-linear-gradient(135deg, transparent 0 19px, rgb(23 97 75 / 11%) 19px 21px); }
+    .lesson-cover-placeholder.pattern-clay { background-color: #f3e8dc; background-image: repeating-linear-gradient(45deg, transparent 0 24px, rgb(202 99 79 / 12%) 24px 27px); }
+    .lesson-cover-placeholder.pattern-blue { background-color: #e5edf0; background-image: repeating-linear-gradient(0deg, transparent 0 21px, rgb(72 117 137 / 12%) 21px 23px), repeating-linear-gradient(90deg, transparent 0 21px, rgb(72 117 137 / 12%) 21px 23px); }
+    .lesson-cover-placeholder.pattern-gold { background-color: #f3efd9; background-image: repeating-linear-gradient(135deg, transparent 0 26px, rgb(148 117 45 / 13%) 26px 29px); }
+    .cover-symbol { display: grid; width: 58px; height: 58px; place-items: center; border: 1px solid rgb(23 45 41 / 20%); border-radius: 50%; background: rgb(255 255 255 / 82%); color: var(--green); font-family: Georgia, serif; font-size: 20px; }
+    .price-label { position: absolute; top: 11px; left: 11px; padding: 6px 8px; border-radius: 3px; background: #fff; color: var(--green); font-size: 9px; font-weight: 700; }
+    .price-label.paid { background: var(--gold); color: #282d20; }
+    .duration-label { position: absolute; right: 10px; bottom: 10px; padding: 5px 7px; border-radius: 3px; background: rgb(16 33 26 / 77%); color: #fff; font-size: 9px; }
+    .lesson-content { padding: 14px 15px 13px; }
+    .lesson-topline { display: flex; align-items: center; justify-content: space-between; gap: 9px; margin-bottom: 8px; }
+    .lesson-category { margin: 0; color: #68786f; font-size: 9px; font-weight: 600; }
+    .example-label { color: #998044; font-size: 8px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
+    .lesson-card h3 { min-height: 40px; margin: 0 0 6px; font-size: 15px; line-height: 1.35; }
+    .lesson-description { min-height: 34px; margin: 0 0 13px; color: var(--muted); font-size: 10px; line-height: 1.6; }
+    .creator-row { display: flex; align-items: center; gap: 8px; padding-top: 11px; border-top: 1px solid #eff0eb; }
+    .creator-avatar { display: grid; width: 27px; height: 27px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: #e7d6be; color: #59432e; font-size: 10px; font-weight: 700; }
+    .creator-name { min-width: 0; flex: 1; color: #43524a; font-size: 10px; font-weight: 600; }
+    .creator-meta { display: block; margin-top: 2px; color: #929992; font-size: 9px; font-weight: 400; }
+    .card-open { width: 30px; height: 30px; flex: 0 0 auto; border: 1px solid var(--line); border-radius: 4px; background: #fff; cursor: pointer; }
+    .card-open:hover { border-color: var(--green); color: var(--green); }
+    .card-save { width: 30px; height: 30px; flex: 0 0 auto; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--green); cursor: pointer; }
+    .card-save[aria-pressed="true"] { border-color: var(--green); background: var(--green-soft); }
+    .empty-state { grid-column: 1 / -1; padding: 42px 16px; border: 1px dashed #d3dcd1; border-radius: 7px; color: var(--muted); text-align: center; font-size: 12px; }
+
+    .creator-band { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 22px; margin: 0 0 65px; padding: 24px 27px; border-radius: 7px; background: #f0e7d2; }
+    .creator-band h2 { font-family: "DM Serif Display", Georgia, serif; font-size: 22px; font-weight: 400; }
+    .creator-band p { margin: 6px 0 0; color: #70674f; font-size: 11px; line-height: 1.6; }
+    .creator-band .button { white-space: nowrap; }
+    .dashboard { min-height: 570px; padding: 35px 0 58px; }
+    .dashboard-head { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
+    .dashboard-head h1 { margin: 0; font-size: 30px; }
+    .dashboard-head p:last-child { margin: 7px 0 0; color: var(--muted); font-size: 12px; }
+    .dashboard-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .dashboard-tabs { display: flex; gap: 5px; overflow-x: auto; margin-bottom: 22px; border-bottom: 1px solid var(--line); }
+    .dashboard-tab { min-height: 40px; padding: 0 14px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); font-size: 11px; white-space: nowrap; cursor: pointer; }
+    .dashboard-tab[aria-selected="true"] { border-bottom-color: var(--green); color: var(--green); font-weight: 700; }
+    .dashboard-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 22px; }
+    .dashboard-stat { padding: 17px; border: 1px solid var(--line); border-radius: 6px; background: white; }
+    .dashboard-stat strong { display: block; margin-bottom: 5px; font-size: 22px; }
+    .dashboard-stat span { color: var(--muted); font-size: 10px; }
+    .dashboard-panel { padding: 19px; border: 1px solid var(--line); border-radius: 6px; background: white; }
+    .dashboard-panel + .dashboard-panel { margin-top: 14px; }
+    .dashboard-panel h2 { margin-bottom: 14px; font-size: 16px; }
+    .dashboard-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 13px 0; border-top: 1px solid var(--line); }
+    .dashboard-row:first-of-type { border-top: 0; }
+    .dashboard-row strong { display: block; font-size: 12px; }
+    .dashboard-row small { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
+    .dashboard-empty { padding: 27px 16px; border: 1px dashed #d3dcd1; border-radius: 5px; color: var(--muted); text-align: center; font-size: 12px; }
+    .profile-form { max-width: 680px; }
+    .profile-form .field textarea { min-height: 108px; }
+    .dashboard-avatar { display: grid; width: 46px; height: 46px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: var(--green-soft); color: var(--green); font-size: 18px; font-weight: 700; }
+    .conduct-policy { margin: 24px 0 42px; padding: 16px 18px; border-left: 3px solid var(--red); background: #f4efea; }
+    .conduct-policy h2 { margin-bottom: 7px; font-size: 14px; }
+    .conduct-policy p { margin: 0; color: #5f6a64; font-size: 11px; line-height: 1.65; }
+    .request-status { display: inline-flex; align-items: center; min-height: 23px; padding: 0 8px; border-radius: 4px; background: #f1f2ed; color: #52645b; font-size: 9px; font-weight: 700; text-transform: capitalize; }
+    .request-status.pending { background: #f8f0d8; color: #775d1b; }
+    .request-status.accepted { background: #e3f0e7; color: #245b40; }
+    .request-status.declined { background: #f5e6e3; color: #8a4034; }
+    footer { display: flex; justify-content: space-between; gap: 20px; padding: 19px 0 25px; border-top: 1px solid var(--line); color: #7d8781; font-size: 10px; }
+    footer a { color: var(--green); text-decoration: none; }
+
+    .backdrop { position: fixed; z-index: 10; inset: 0; display: grid; place-items: center; overflow-y: auto; padding: 20px; background: rgb(18 35 29 / 53%); }
+    .backdrop[hidden] { display: none; }
+    .dialog { width: min(100%, 520px); max-height: min(90vh, 820px); overflow-y: auto; padding: 23px; border: 1px solid var(--line); border-radius: 8px; background: var(--white); box-shadow: var(--shadow); animation: lift-in 180ms ease both; }
+    .dialog.wide { width: min(100%, 670px); }
+    .dialog-head { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+    .dialog-head h2 { font-family: "DM Serif Display", Georgia, serif; font-size: 24px; font-weight: 400; }
+    .dialog-head p { margin: 6px 0 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .icon-close { display: grid; width: 32px; height: 32px; flex: 0 0 auto; place-items: center; border: 1px solid var(--line); border-radius: 4px; background: white; font-size: 18px; cursor: pointer; }
+    .field { display: grid; gap: 6px; margin-bottom: 13px; }
+    .field label { font-size: 10px; font-weight: 700; }
+    .field input, .field select, .field textarea { width: 100%; min-height: 39px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--ink); font-size: 11px; }
+    .field textarea { min-height: 74px; resize: vertical; }
+    .field small { color: var(--muted); font-size: 9px; line-height: 1.5; }
+    .role-options { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .role-option { display: flex; align-items: start; gap: 8px; min-height: 68px; padding: 11px; border: 1px solid var(--line); border-radius: 5px; cursor: pointer; }
+    .role-option:has(input:checked) { border-color: var(--green); background: #f4f8f4; }
+    .role-option input { margin-top: 2px; accent-color: var(--green); }
+    .role-option strong { display: block; font-size: 10px; }
+    .role-option span { display: block; margin-top: 4px; color: var(--muted); font-size: 9px; line-height: 1.45; }
+    .inline-link { padding: 0; border: 0; background: transparent; color: var(--green); font-size: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
+    .two-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .price-options { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .price-option { display: flex; align-items: start; gap: 8px; padding: 11px; border: 1px solid var(--line); border-radius: 5px; cursor: pointer; }
+    .price-option:has(input:checked) { border-color: var(--green); background: #f4f8f4; }
+    .price-option input { accent-color: var(--green); }
+    .price-option strong { display: block; font-size: 10px; }
+    .price-option span { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; line-height: 1.4; }
+    .drop-zone { display: grid; min-height: 90px; place-items: center; padding: 12px; border: 1px dashed #b9cbb9; border-radius: 5px; background: #f8faf6; text-align: center; cursor: pointer; }
+    .drop-zone strong { font-size: 11px; }
+    .drop-zone span { display: block; margin-top: 5px; color: var(--muted); font-size: 9px; }
+    .drop-zone input { display: none; }
+    .form-notice { margin: 12px 0 0; padding: 10px; border-radius: 4px; background: #f5f2e8; color: #645c44; font-size: 9px; line-height: 1.55; }
+    .dialog-actions { display: flex; justify-content: end; gap: 8px; margin-top: 17px; }
+    .lesson-player { width: 100%; max-height: 340px; border-radius: 5px; background: #172d29; }
+    .video-placeholder { display: grid; min-height: 205px; place-items: center; padding: 25px; border-radius: 5px; background: #eff3ed; color: #586960; text-align: center; }
+    .video-placeholder span { display: block; margin-bottom: 8px; font-size: 24px; }
+    .video-placeholder p { max-width: 355px; margin: 0; font-size: 11px; line-height: 1.6; }
+    .lesson-info { margin: 15px 0; color: #65746b; font-size: 11px; line-height: 1.7; }
+    .checkout-note { margin-top: 14px; padding: 12px; border: 1px solid #eee2bd; border-radius: 4px; background: #fbf7e9; color: #665c3d; font-size: 10px; line-height: 1.55; }
+    .toast { position: fixed; z-index: 20; right: 18px; bottom: 18px; max-width: calc(100vw - 36px); padding: 12px 15px; border-radius: 5px; background: var(--ink); color: white; font-size: 11px; box-shadow: var(--shadow); }
+    .toast[hidden] { display: none; }
+
+    @media (max-width: 850px) {
+      .shell { padding-inline: 23px; }
+      .lesson-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .top-nav { gap: 15px; }
+    }
+    @media (max-width: 620px) {
+      .shell { padding-inline: 16px; }
+      .topbar { height: 62px; }
+      .brand { font-size: 15px; }
+      .top-nav { display: none; }
+      .top-actions { gap: 5px; }
+      .top-actions .button { min-height: 34px; padding-inline: 9px; font-size: 10px; }
+      .account-pill { max-width: 94px; overflow: hidden; padding-inline: 6px; font-size: 9px; }
+      .hero { margin-top: 26px; }
+      h1 { font-size: 30px; }
+      .hero-search .button { padding-inline: 12px; font-size: 10px; }
+      .browse { padding-top: 22px; }
+      .browse-head { align-items: start; flex-direction: column; }
+      .browse-tools { width: 100%; }
+      .search-wrap { flex: 1; }
+      .browse-tools .search-input { width: 100%; }
+      .sort-select { max-width: 130px; }
+      .lesson-grid { grid-template-columns: 1fr; gap: 12px; }
+      .lesson-cover { aspect-ratio: 1.85; }
+      .lesson-card h3, .lesson-description { min-height: 0; }
+      .creator-band { grid-template-columns: 1fr; margin-bottom: 40px; padding: 20px; }
+      .creator-band .button { justify-self: start; }
+      footer { flex-direction: column; gap: 8px; }
+      .two-fields { grid-template-columns: 1fr; gap: 0; }
+      .dialog { padding: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <header class="shell topbar">
+    <a class="brand" href="#top" aria-label="My Sign home"><span class="brand-mark" aria-hidden="true">M<span>.</span></span> My Sign</a>
+    <nav class="top-nav" aria-label="Main navigation">
+      <a href="#browse">Explore lessons</a>
+      <a href="#teach">For signers</a>
+    </nav>
+    <div class="top-actions">
+      <button class="account-pill" id="accountPill" type="button" hidden></button>
+      <button class="button outline small" id="signOutButton" type="button" hidden>Sign out</button>
+      <button class="button outline small" id="signInButton" type="button">Sign in</button>
+      <button class="button small" id="joinButton" type="button">Join</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="shell" id="top">
+      <section class="hero public-only" aria-labelledby="heroTitle">
+        <div class="hero-copy">
+          <p class="overline">SIGN LANGUAGE TUTORING</p>
+          <h1 id="heroTitle">Find a sign language tutor</h1>
+          <p>Learn one-to-one with Deaf signers and experienced tutors. Compare free and paid lessons, then choose the right teacher for you.</p>
+          <form class="hero-search" id="teacherSearchForm">
+            <label class="search-wrap"><span class="search-icon" aria-hidden="true">⌕</span><span class="sr-only">Search tutors and subjects</span><input class="search-input" id="searchInput" type="search" placeholder="What would you like to learn?"></label>
+            <button class="button" type="submit">Find tutors</button>
+          </form>
+          <button class="hero-link" id="publishHero" type="button">Are you a signer or teacher? Share a lesson</button>
+        </div>
+      </section>
+
+      <section class="browse public-only" id="browse" aria-labelledby="browseTitle">
+        <div class="browse-head">
+          <div><p class="section-kicker">TUTOR DIRECTORY</p><h2 id="browseTitle">Browse sign language tutors</h2><p class="section-intro">Choose a free lesson or a paid session with a tutor.</p></div>
+          <div class="browse-tools">
+            <label class="sr-only" for="sortLessons">Sort lessons</label><select class="sort-select" id="sortLessons"><option value="featured">Featured</option><option value="free">Free first</option></select>
+          </div>
+        </div>
+        <div class="filter-row" role="group" aria-label="Filter lessons by topic">
+          <span class="filter-label">SHOW</span>
+          <button class="filter" type="button" data-category="All" aria-pressed="true">All lessons</button>
+          <button class="filter" type="button" data-category="Free" aria-pressed="false">Free</button>
+          <button class="filter" type="button" data-category="Paid" aria-pressed="false">Paid</button>
+          <button class="filter" type="button" data-category="My lessons" aria-pressed="false">My lessons</button>
+        </div>
+        <div class="lesson-grid" id="lessonGrid" aria-live="polite"></div>
+      </section>
+
+      <section class="creator-band public-only" id="teach" aria-labelledby="creatorTitle">
+        <div><p class="section-kicker">FOR SIGNERS &amp; TEACHERS</p><h2 id="creatorTitle">Your signs can open doors.</h2><p>Share what you know. Choose what to make free, and set a fair price for the rest.</p></div>
+        <button class="button" id="publishBand" type="button">Share your first lesson <span aria-hidden="true">→</span></button>
+      </section>
+
+      <section class="conduct-policy public-only" id="communitySafety" aria-labelledby="safetyTitle">
+        <h2 id="safetyTitle">Community safety</h2>
+        <p>Harassment is strictly prohibited, including threats, sexual harassment, stalking, discrimination, abuse, and repeated unwanted contact. Anyone found to have violated this rule will be removed from the platform. Credible threats or suspected criminal conduct will be referred to law enforcement where appropriate and permitted by law. If someone is in immediate danger, contact local emergency services.</p>
+      </section>
+
+      <section id="how-it-works" class="sr-only public-only" aria-label="How the marketplace works">Creators share sign-language video lessons, choose free or paid access, and learners can browse community lessons.</section>
+      <footer class="public-only">
+        <span>My Sign · Learn together</span>
+        <span>Demo marketplace · <a href="#teach">Become a creator</a></span>
+      </footer>
+
+      <section class="dashboard" id="dashboardView" hidden aria-labelledby="dashboardTitle">
+        <div class="dashboard-head">
+          <div><p class="section-kicker" id="dashboardRole">MY SIGN DASHBOARD</p><h1 id="dashboardTitle">Welcome back</h1><p id="dashboardIntro"></p></div>
+          <div class="dashboard-actions"><button class="button outline small" id="findTutorsButton" type="button">Find tutors</button><button class="button small" id="dashboardPublishButton" type="button" hidden>+ Add a lesson</button></div>
+        </div>
+        <nav class="dashboard-tabs" id="dashboardTabs" aria-label="Dashboard sections"></nav>
+        <div id="dashboardContent"></div>
+        <section class="conduct-policy" aria-labelledby="dashboardSafetyTitle"><h2 id="dashboardSafetyTitle">Community safety</h2><p>Harassment is strictly prohibited, including threats, sexual harassment, stalking, discrimination, abuse, and repeated unwanted contact. Anyone found to have violated this rule will be removed from the platform. Credible threats or suspected criminal conduct will be referred to law enforcement where appropriate and permitted by law.</p></section>
+      </section>
+    </div>
+  </main>
+
+  <div class="backdrop" id="joinBackdrop" hidden>
+    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="joinTitle">
+      <div class="dialog-head"><div><p class="section-kicker">JOIN MY SIGN</p><h2 id="joinTitle">Join the learning community</h2><p>Choose how you want to take part.</p></div><button class="icon-close" type="button" data-close="joinBackdrop" aria-label="Close">×</button></div>
+      <form id="joinForm">
+        <div class="field"><label for="joinName">Your name</label><input id="joinName" name="name" required maxlength="50" autocomplete="name"></div>
+        <div class="field"><label for="joinEmail">Email address</label><input id="joinEmail" name="email" type="email" required maxlength="120" autocomplete="email"></div>
+        <div class="field"><label>Your role</label><div class="role-options">
+          <label class="role-option"><input type="radio" name="role" value="learner" checked><span><strong>Learner</strong><span>Find free and paid lessons.</span></span></label>
+          <label class="role-option"><input type="radio" name="role" value="teacher"><span><strong>Deaf signer / teacher</strong><span>Share lessons with learners.</span></span></label>
+        </div></div>
+        <div class="field"><label class="role-option" style="min-height:0"><input id="acceptSafetyPolicy" name="acceptSafetyPolicy" type="checkbox" required><span><strong>I agree to the platform terms and community rules.</strong><span>Harassment and abuse are prohibited.</span></span></label><button class="inline-link" type="button" data-open-terms>Read the full agreement</button></div>
+        <div class="field" id="teacherTaxAgreement" hidden><label class="role-option" style="min-height:0"><input id="acceptTaxTerms" name="acceptTaxTerms" type="checkbox"><span><strong>I accept responsibility for my own tax and legal obligations.</strong><span>I will follow applicable local tax and business rules for lessons I offer.</span></span></label></div>
+        <p class="form-notice">Demo only: profile details stay in this browser. Secure accounts need a server.</p>
+        <div class="dialog-actions"><button class="button outline" type="button" data-switch-auth="signin">Already joined? Sign in</button><button class="button" type="submit">Join</button></div>
+      </form>
+    </section>
+  </div>
+
+  <div class="backdrop" id="termsBackdrop" hidden>
+    <section class="dialog wide" role="dialog" aria-modal="true" aria-labelledby="termsTitle">
+      <div class="dialog-head"><div><p class="section-kicker">MY SIGN</p><h2 id="termsTitle">Platform agreement</h2><p>Review the rules before joining.</p></div><button class="icon-close" type="button" data-close="termsBackdrop" aria-label="Close">×</button></div>
+      <div class="lesson-info">
+        <p><strong>Community conduct.</strong> Harassment, threats, sexual misconduct, stalking, discrimination, fraud, and repeated unwanted contact are prohibited. Confirmed violations will result in account removal. Credible threats or suspected criminal conduct will be referred to law enforcement where appropriate and permitted by law.</p>
+        <p><strong>Lessons and meetings.</strong> Users are responsible for accurate listings and respectful communication. For in-person lessons, choose a public location and use your own judgment. Users are responsible for deciding whether a lesson or meeting is suitable.</p>
+        <p><strong>Teacher responsibilities.</strong> Teachers set their own prices and are responsible for their own income reporting, taxes, permits, and other obligations under applicable local law. Learners and teachers agree lesson details directly.</p>
+        <p><strong>Platform role.</strong> My Sign provides a place to discover tutors and exchange requests. To the extent permitted by law, My Sign is not responsible for independent user conduct or arrangements. Nothing in this agreement removes rights or liability that cannot legally be excluded.</p>
+        <p><strong>Prototype.</strong> This demo stores information in the current browser. Secure accounts, moderation operations, video hosting, payments, and production booking notifications are not connected.</p>
+      </div>
+      <p class="form-notice">Draft terms for a prototype, not legal advice. Have qualified counsel review the agreement and local requirements before public launch.</p>
+      <div class="dialog-actions"><button class="button" type="button" data-close="termsBackdrop">Close</button></div>
+    </section>
+  </div>
+
+  <div class="backdrop" id="signInBackdrop" hidden>
+    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="signInTitle">
+      <div class="dialog-head"><div><p class="section-kicker">WELCOME BACK</p><h2 id="signInTitle">Sign in</h2><p>Continue with a demo profile saved on this device.</p></div><button class="icon-close" type="button" data-close="signInBackdrop" aria-label="Close">×</button></div>
+      <form id="signInForm">
+        <div class="field"><label for="signInEmail">Email address</label><input id="signInEmail" name="email" type="email" required autocomplete="email"></div>
+        <p class="form-notice">Local demo sign-in only. No password is collected or verified.</p>
+        <div class="dialog-actions"><button class="button outline" type="button" data-switch-auth="join">New here? Join</button><button class="button" type="submit">Continue</button></div>
+      </form>
+    </section>
+  </div>
+
+  <div class="backdrop" id="publishBackdrop" hidden>
+    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="publishTitle">
+      <div class="dialog-head"><div><h2 id="publishTitle">Share a lesson</h2><p>Teach a sign or topic you know. Your video stays in this browser demo.</p></div><button class="icon-close" type="button" data-close="publishBackdrop" aria-label="Close">×</button></div>
+      <form id="publishForm">
+        <div class="field"><label for="lessonTitle">Lesson title</label><input id="lessonTitle" name="title" required maxlength="70" placeholder="e.g. Greetings and introductions"></div>
+        <div class="field"><label for="lessonDescription">What will learners see?</label><textarea id="lessonDescription" name="description" maxlength="200" required placeholder="Briefly describe what you demonstrate in the video"></textarea></div>
+        <div class="two-fields">
+          <div class="field"><label for="lessonCategory">Topic</label><select id="lessonCategory" name="category"><option>Everyday life</option><option>Community</option><option>Learning basics</option><option>Stories</option></select></div>
+          <div class="field"><label for="creatorName">Your display name</label><input id="creatorName" name="creator" required maxlength="35" placeholder="How learners know you"></div>
+        </div>
+        <fieldset class="field" style="padding:0;border:0"><legend style="margin-bottom:7px;font-size:10px;font-weight:700">Teaching formats</legend><div class="price-options">
+          <label class="price-option"><input type="checkbox" name="formats" value="virtual" checked><span><strong>Virtual</strong><span>Meet online.</span></span></label>
+          <label class="price-option"><input type="checkbox" name="formats" value="in-person"><span><strong>In person</strong><span>Meet face to face.</span></span></label>
+        </div></fieldset>
+        <div class="field" id="meetingLocationField" hidden><label for="meetingLocation">In-person meeting area</label><input id="meetingLocation" name="location" maxlength="100" placeholder="City or public meeting area"></div>
+        <div class="field"><label>Choose access</label><div class="price-options">
+          <label class="price-option"><input type="radio" name="access" value="free" checked><span><strong>Free for everyone</strong><span>Let anyone watch your lesson.</span></span></label>
+          <label class="price-option"><input type="radio" name="access" value="paid"><span><strong>Paid access</strong><span>Set your lesson price.</span></span></label>
+        </div></div>
+        <div class="two-fields" id="priceField" hidden>
+          <div class="field"><label for="lessonPrice">Your price</label><input id="lessonPrice" name="price" type="number" min="1" max="100000" step="0.01"></div>
+          <div class="field"><label for="lessonCurrency">Your currency</label><select id="lessonCurrency" name="currency"><option value="" selected disabled>Choose currency</option><option value="ETB">ETB</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="KES">KES</option><option value="NGN">NGN</option><option value="ZAR">ZAR</option><option value="CAD">CAD</option><option value="AUD">AUD</option></select></div>
+          <small>Real payments are not connected in this prototype.</small>
+        </div>
+        <div class="field"><label for="lessonVideo">Lesson video</label><label class="drop-zone" for="lessonVideo"><span><strong id="videoLabel">Choose a video to upload</strong><span>MP4 or WebM · up to 100 MB · stays in this browser session</span></span><input id="lessonVideo" name="video" type="file" accept="video/mp4,video/webm,video/quicktime"></label></div>
+        <p class="form-notice">For accessible signing, keep your hands, face, and upper body clearly in frame. A real platform would securely store your video and handle payments; this demo does neither.</p>
+        <div class="dialog-actions"><button class="button outline" type="button" data-close="publishBackdrop">Cancel</button><button class="button" type="submit">Publish lesson</button></div>
+      </form>
+    </section>
+  </div>
+
+  <div class="backdrop" id="lessonBackdrop" hidden>
+    <section class="dialog wide" role="dialog" aria-modal="true" aria-labelledby="lessonDialogTitle">
+      <div class="dialog-head"><div><p class="section-kicker" id="lessonDialogKicker">COMMUNITY LESSON</p><h2 id="lessonDialogTitle">Lesson</h2></div><button class="icon-close" type="button" data-close="lessonBackdrop" aria-label="Close">×</button></div>
+      <div id="lessonPlayer"></div>
+      <p class="lesson-info" id="lessonInfo"></p>
+      <div id="lessonAccessAction"></div>
+    </section>
+  </div>
+
+  <div class="backdrop" id="bookingBackdrop" hidden>
+    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="bookingTitle">
+      <div class="dialog-head"><div><p class="section-kicker">LESSON REQUEST</p><h2 id="bookingTitle">Request a lesson</h2><p id="bookingTutorName"></p></div><button class="icon-close" type="button" data-close="bookingBackdrop" aria-label="Close">×</button></div>
+      <form id="bookingForm">
+        <div class="field"><label for="bookingFormat">Teaching format</label><select id="bookingFormat" name="format" required></select></div>
+        <div class="field"><label for="bookingTime">Preferred date and time</label><input id="bookingTime" name="preferredTime" type="datetime-local" required></div>
+        <div class="field"><label for="bookingMessage">Message to the tutor</label><textarea id="bookingMessage" name="message" maxlength="500" placeholder="Tell the tutor what you’d like to learn"></textarea></div>
+        <p class="form-notice">Your request stays pending until the tutor responds. Scheduling and messages are saved in this browser demo.</p>
+        <div class="dialog-actions"><button class="button outline" type="button" data-close="bookingBackdrop">Cancel</button><button class="button" type="submit">Send request</button></div>
+      </form>
+    </section>
+  </div>
+
+  <div class="backdrop" id="checkoutBackdrop" hidden>
+    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+      <div class="dialog-head"><div><p class="section-kicker">SUPPORT A CREATOR</p><h2 id="checkoutTitle">Unlock this lesson</h2></div><button class="icon-close" type="button" data-close="checkoutBackdrop" aria-label="Close">×</button></div>
+      <p class="lesson-info" id="checkoutDetails"></p>
+      <div class="checkout-note"><strong>Prototype only.</strong> No payment provider is connected and nothing will be charged. The button below simulates lesson access on this device.</div>
+      <div class="dialog-actions"><button class="button outline" type="button" data-close="checkoutBackdrop">Not now</button><button class="button gold" id="confirmDemoAccess" type="button">Try demo access</button></div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <style>.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }</style>
+  <script>
+    const STORAGE_KEY = "selam-signs-marketplace-v1";
+    const ACCOUNT_KEY = "enadd-signs-demo-accounts-v1";
+    const sampleLessons = [
+      { id: "sample-elias", title: "Community phrases and conversation", description: "Sample tutor profile. Elias will set his price when publishing.", category: "Community", creator: "Elias", price: null, currency: "", access: "paid", duration: "Sample", coverPattern: "pattern-sage", coverMark: "↔", example: true },
+      { id: "sample-selam", title: "Free beginner sign language lesson", description: "Sample tutor profile. No lesson video is included in this demo.", category: "Learning basics", creator: "Selam", price: 0, duration: "Sample", coverPattern: "pattern-clay", coverMark: "S", example: true },
+      { id: "sample-hiwot", title: "Numbers and everyday signs", description: "Sample tutor profile. Hiwot will set her price when publishing.", category: "Everyday life", creator: "Hiwot", price: null, currency: "", access: "paid", duration: "Sample", coverPattern: "pattern-blue", coverMark: "1", example: true },
+      { id: "sample-ahmed", title: "First signs and greetings", description: "Sample tutor profile. No lesson video is included in this demo.", category: "Learning basics", creator: "Ahmed", price: 0, duration: "Sample", coverPattern: "pattern-gold", coverMark: "A", example: true },
+    ];
+
+    let saved;
+    try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch { saved = null; }
+    const data = saved && Array.isArray(saved.lessons) ? saved : { lessons: [], unlocked: [] };
+    if (!Array.isArray(data.requests)) data.requests = [];
+    let accountData;
+    try { accountData = JSON.parse(localStorage.getItem(ACCOUNT_KEY)); } catch { accountData = null; }
+    if (!accountData || !Array.isArray(accountData.accounts)) accountData = { accounts: [], currentEmail: "" };
+    const uploadedVideos = new Map();
+    let category = "All";
+    let activeLessonId = null;
+    let toastTimeout;
+    let dashboardMode = true;
+    let dashboardTab = "overview";
+    let requestedLessonId = "";
+
+    function persist() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+      catch { showToast("Could not save in this browser. Check local storage settings."); }
+    }
+
+    function persistAccounts() {
+      try {
+        localStorage.setItem(ACCOUNT_KEY, JSON.stringify(accountData));
+        updateAccountHeader();
+      } catch {
+        showToast("Could not save the demo profile in this browser.");
+      }
+    }
+
+    function currentAccount() {
+      return accountData.accounts.find(item => item.email === accountData.currentEmail);
+    }
+
+    function updateAccountHeader() {
+      const account = currentAccount();
+      const showDashboard = Boolean(account && dashboardMode);
+      const pill = document.getElementById("accountPill");
+      pill.hidden = !account;
+      pill.textContent = account ? `${account.name} · ${account.role === "teacher" ? "Signer / teacher" : "Learner"}` : "";
+      document.getElementById("joinButton").hidden = Boolean(account);
+      document.getElementById("signInButton").hidden = Boolean(account);
+      document.getElementById("signOutButton").hidden = !account;
+      document.querySelector(".top-nav").hidden = showDashboard;
+      document.querySelectorAll(".public-only").forEach(section => { section.hidden = showDashboard; });
+      document.getElementById("dashboardView").hidden = !showDashboard;
+      if (account && showDashboard) renderDashboard();
+    }
+
+    function dashboardProfileMarkup(account) {
+      const profile = account.profile || {};
+      const teacher = account.role === "teacher";
+      return `<section class="dashboard-panel"><h2>Your profile</h2><form class="profile-form" id="dashboardProfileForm">
+        <div class="field"><label for="profileName">Display name</label><input id="profileName" name="name" value="${escapeHTML(account.name)}" required maxlength="50"></div>
+        <div class="field"><label for="profileCity">City or area</label><input id="profileCity" name="city" value="${escapeHTML(profile.city || "")}" maxlength="60" placeholder="Where you teach or learn"></div>
+        <div class="field"><label for="profileTopics">${teacher ? "Subjects you teach" : "What you want to learn"}</label><input id="profileTopics" name="topics" value="${escapeHTML(profile.topics || "")}" maxlength="120" placeholder="e.g. Everyday conversation"></div>
+        <div class="field"><label for="profileBio">About you</label><textarea id="profileBio" name="bio" maxlength="500" placeholder="A short introduction">${escapeHTML(profile.bio || "")}</textarea></div>
+        <button class="button" type="submit">Save profile</button>
+      </form></section>`;
+    }
+
+    function dashboardLessonRows(lessons, actionLabel, actionAttribute) {
+      if (!lessons.length) return `<div class="dashboard-empty">Nothing here yet. ${actionAttribute === "data-delete-lesson" ? "Publish your first lesson to get started." : "Save a tutor from the directory to find them here."}</div>`;
+      return lessons.map(lesson => `<div class="dashboard-row"><div class="dashboard-avatar" aria-hidden="true">${escapeHTML(lesson.coverMark || "S")}</div><div style="min-width:0;flex:1"><strong>${escapeHTML(lesson.title)}</strong><small>${escapeHTML(lesson.creator)} · ${lesson.access === "paid" ? (lesson.price == null ? "Tutor sets price" : formatPrice(lesson)) : "Free"}</small></div><button class="button outline small" type="button" ${actionAttribute}="${escapeHTML(lesson.id)}">${actionLabel}</button></div>`).join("");
+    }
+
+    function dashboardRequestRows(requests, teacherView) {
+      if (!requests.length) return `<div class="dashboard-empty">${teacherView ? "Lesson requests from learners will appear here." : "Your lesson requests will appear here."}</div>`;
+      return requests.map(request => {
+        const formatLabel = request.format === "in-person" ? `In person${request.location ? ` · ${request.location}` : ""}` : "Virtual";
+        const timeLabel = request.preferredTime ? new Date(request.preferredTime).toLocaleString() : "Time not set";
+        const otherPerson = teacherView ? request.learnerName : request.teacherName;
+        const contactEmail = teacherView || request.status === "accepted" ? (teacherView ? request.learnerEmail : request.teacherEmail) : "";
+        const controls = teacherView && request.status === "pending"
+          ? `<div class="dashboard-actions"><span class="request-status pending">Pending</span><button class="button small" type="button" data-request-action="accepted" data-request-id="${escapeHTML(request.id)}">Accept</button><button class="button outline small" type="button" data-request-action="declined" data-request-id="${escapeHTML(request.id)}">Decline</button></div>`
+          : `<span class="request-status ${escapeHTML(request.status)}">${escapeHTML(request.status)}</span>`;
+        return `<div class="dashboard-row"><div class="dashboard-avatar" aria-hidden="true">${escapeHTML((otherPerson || "S").charAt(0).toUpperCase())}</div><div style="min-width:0;flex:1"><strong>${escapeHTML(request.lessonTitle)}</strong><small>${escapeHTML(otherPerson || "Learner")} · ${escapeHTML(formatLabel)} · ${escapeHTML(timeLabel)}</small>${contactEmail ? `<small>Contact: ${escapeHTML(contactEmail)}</small>` : ""}${request.message ? `<small>${escapeHTML(request.message)}</small>` : ""}</div>${controls}</div>`;
+      }).join("");
+    }
+
+    function renderDashboard() {
+      const account = currentAccount();
+      if (!account) return;
+      if (!Array.isArray(account.savedTutors)) account.savedTutors = [];
+      if (!account.profile || typeof account.profile !== "object") account.profile = {};
+      const teacher = account.role === "teacher";
+      const lessons = data.lessons.filter(lesson => lesson.ownerEmail === account.email || lesson.creator.trim().toLowerCase() === account.name.trim().toLowerCase());
+      const saved = account.savedTutors.map(lessonById).filter(Boolean);
+      const requests = data.requests.filter(request => teacher ? request.teacherEmail === account.email : request.learnerEmail === account.email);
+      const tabs = teacher
+        ? [{ id: "overview", label: "Overview" }, { id: "requests", label: `Requests${requests.some(request => request.status === "pending") ? ` (${requests.filter(request => request.status === "pending").length})` : ""}` }, { id: "lessons", label: "My lessons" }, { id: "profile", label: "Teaching profile" }]
+        : [{ id: "overview", label: "Overview" }, { id: "requests", label: "My requests" }, { id: "saved", label: "Saved tutors" }, { id: "profile", label: "My profile" }];
+      if (!tabs.some(tab => tab.id === dashboardTab)) dashboardTab = "overview";
+
+      document.getElementById("dashboardRole").textContent = teacher ? "SIGNER / TEACHER SPACE" : "LEARNER SPACE";
+      document.getElementById("dashboardTitle").textContent = `Welcome, ${account.name}`;
+      document.getElementById("dashboardIntro").textContent = teacher ? "Manage your teaching profile and lessons." : "Keep your sign language learning in one place.";
+      document.getElementById("dashboardPublishButton").hidden = !teacher;
+      document.getElementById("dashboardTabs").innerHTML = tabs.map(tab => `<button class="dashboard-tab" type="button" data-dashboard-tab="${tab.id}" aria-selected="${tab.id === dashboardTab}">${tab.label}</button>`).join("");
+
+      const content = document.getElementById("dashboardContent");
+      if (dashboardTab === "profile") {
+        content.innerHTML = dashboardProfileMarkup(account);
+        return;
+      }
+      if (teacher && dashboardTab === "lessons") {
+        content.innerHTML = `<section class="dashboard-panel"><h2>Your lessons</h2>${dashboardLessonRows(lessons, "Remove", "data-delete-lesson")}</section>`;
+        return;
+      }
+      if (!teacher && dashboardTab === "saved") {
+        content.innerHTML = `<section class="dashboard-panel"><h2>Saved tutors</h2>${dashboardLessonRows(saved, "Remove", "data-unsave-tutor")}</section>`;
+        return;
+      }
+      if (dashboardTab === "requests") {
+        content.innerHTML = `<section class="dashboard-panel"><h2>${teacher ? "Learner requests" : "My lesson requests"}</h2>${dashboardRequestRows(requests, teacher)}</section>`;
+        return;
+      }
+
+      if (teacher) {
+        const freeCount = lessons.filter(lesson => lesson.price === 0).length;
+        const paidCount = lessons.filter(lesson => lesson.price > 0).length;
+        const pendingCount = requests.filter(request => request.status === "pending").length;
+        content.innerHTML = `<div class="dashboard-stats"><div class="dashboard-stat"><strong>${lessons.length}</strong><span>Published lessons</span></div><div class="dashboard-stat"><strong>${pendingCount}</strong><span>Pending requests</span></div><div class="dashboard-stat"><strong>${freeCount} / ${paidCount}</strong><span>Free / paid lessons</span></div></div><section class="dashboard-panel"><h2>New requests</h2>${dashboardRequestRows(requests.filter(request => request.status === "pending").slice(0, 3), true)}<button class="button outline small" type="button" data-dashboard-tab="requests">View all requests</button></section><section class="dashboard-panel"><h2>Recent lessons</h2>${dashboardLessonRows(lessons.slice(0, 4), "Manage", "data-dashboard-tab-to-lessons")}</section><section class="dashboard-panel"><h2>Teaching profile</h2><p class="section-intro">${escapeHTML(account.profile.bio || "Add a short introduction so learners can get to know you.")}</p><button class="button outline small" type="button" data-dashboard-tab="profile">Edit profile</button></section>`;
+        return;
+      }
+
+      content.innerHTML = `<div class="dashboard-stats"><div class="dashboard-stat"><strong>${saved.length}</strong><span>Saved tutors</span></div><div class="dashboard-stat"><strong>${requests.length}</strong><span>Lesson requests</span></div><div class="dashboard-stat"><strong>${requests.filter(request => request.status === "accepted").length}</strong><span>Accepted lessons</span></div></div><section class="dashboard-panel"><h2>Recent lesson requests</h2>${dashboardRequestRows(requests.slice(0, 3), false)}<button class="button outline small" type="button" data-dashboard-tab="requests">View all requests</button></section><section class="dashboard-panel"><h2>Saved tutors</h2>${dashboardLessonRows(saved.slice(0, 4), "Open", "data-open-saved-tutor")}</section><section class="dashboard-panel"><h2>Keep learning</h2><p class="section-intro">Find a tutor and save their listing here for easy access.</p><button class="button" type="button" id="dashboardBrowseButton">Browse tutors</button></section>`;
+    }
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
+    }
+
+    function allLessons() { return [...data.lessons, ...sampleLessons]; }
+    function lessonById(id) { return allLessons().find(lesson => lesson.id === id); }
+    function isUnlocked(lesson) { return (lesson.access !== "paid" && lesson.price === 0) || data.unlocked.includes(lesson.id); }
+    function formatPrice(lesson) {
+      const currency = lesson.currency || "ETB";
+      return new Intl.NumberFormat(undefined, { style: "currency", currency, maximumFractionDigits: 2 }).format(Number(lesson.price));
+    }
+
+    function renderLessons() {
+      const query = document.getElementById("searchInput").value.trim().toLocaleLowerCase();
+      const sort = document.getElementById("sortLessons").value;
+      let lessons = allLessons().filter(lesson => {
+        const matchesCategory = category === "All"
+          || (category === "Free" && lesson.price === 0)
+          || (category === "Paid" && (lesson.access === "paid" || lesson.price > 0))
+          || (category === "My lessons" && !lesson.example);
+        const matchesText = `${lesson.title} ${lesson.creator} ${lesson.category}`.toLocaleLowerCase().includes(query);
+        return matchesCategory && matchesText;
+      });
+      if (sort === "free") lessons.sort((a, b) => (a.price > 0) - (b.price > 0));
+
+      const grid = document.getElementById("lessonGrid");
+      if (!lessons.length) {
+        grid.innerHTML = `<div class="empty-state">${category === "My lessons" ? "Your posted lessons will appear here." : "No lessons match that search yet. Try another topic or search."}</div>`;
+        return;
+      }
+      grid.innerHTML = lessons.map((lesson, index) => {
+        const paid = lesson.access === "paid" || Number(lesson.price) > 0;
+        const priceText = paid ? (lesson.price == null ? "Tutor sets price" : formatPrice(lesson)) : "FREE";
+        const savedByUser = currentAccount()?.savedTutors?.includes(lesson.id) || false;
+        const formatSummary = lesson.example ? "Sample tutor profile" : (lesson.formats || ["virtual"]).map(format => format === "in-person" ? "In person" : "Virtual").join(" · ");
+        return `<article class="lesson-card" style="animation-delay:${Math.min(index, 5) * 45}ms">
+          <div class="lesson-cover"><div class="lesson-cover-placeholder ${escapeHTML(lesson.coverPattern || ["pattern-sage", "pattern-clay", "pattern-blue"][index % 3])}" aria-hidden="true"><span class="cover-symbol">${escapeHTML(lesson.coverMark || (paid ? "↔" : "S"))}</span></div><span class="price-label${paid ? " paid" : ""}">${escapeHTML(priceText)}</span><span class="duration-label">${escapeHTML(lesson.duration || "Video lesson")}</span></div>
+          <div class="lesson-content"><div class="lesson-topline"><p class="lesson-category">${escapeHTML(lesson.category)}</p>${lesson.example ? '<span class="example-label">Sample profile</span>' : ""}</div>
+            <h3>${escapeHTML(lesson.title)}</h3><p class="lesson-description">${escapeHTML(lesson.description)}</p>
+            <div class="creator-row"><span class="creator-avatar" aria-hidden="true">${escapeHTML((lesson.creator || "S").trim().charAt(0).toUpperCase())}</span><span class="creator-name">${escapeHTML(lesson.creator)}<span class="creator-meta">${escapeHTML(formatSummary)}</span></span>
+            <button class="card-save" type="button" data-save-tutor="${escapeHTML(lesson.id)}" aria-label="${savedByUser ? "Remove saved tutor" : "Save tutor"}" aria-pressed="${savedByUser}" title="${savedByUser ? "Remove saved tutor" : "Save tutor"}">${savedByUser ? "★" : "☆"}</button>
+            <button class="card-open" type="button" data-open-lesson="${escapeHTML(lesson.id)}" aria-label="${isUnlocked(lesson) ? "View" : "Access"} ${escapeHTML(lesson.title)}">${isUnlocked(lesson) ? "↗" : "›"}</button></div>
+          </div>
+        </article>`;
+      }).join("");
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.hidden = false;
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => { toast.hidden = true; }, 3200);
+    }
+
+    function openDialog(id) {
+      document.getElementById(id).hidden = false;
+      const account = currentAccount();
+      if (id === "publishBackdrop" && account?.role === "teacher") document.getElementById("creatorName").value = account.name;
+      const dialog = document.querySelector(`#${id} [role="dialog"]`);
+      dialog?.querySelector("input:not([type=radio]), button")?.focus();
+    }
+
+    function closeDialog(id) {
+      document.getElementById(id).hidden = true;
+    }
+
+    function openLesson(lesson) {
+      activeLessonId = lesson.id;
+      document.getElementById("lessonDialogTitle").textContent = lesson.title;
+      document.getElementById("lessonDialogKicker").textContent = lesson.example ? "EXAMPLE LISTING · NO VIDEO PROVIDED" : "COMMUNITY LESSON";
+      document.getElementById("lessonInfo").textContent = `${lesson.category} · Shared by ${lesson.creator}. ${lesson.description}`;
+      const videoUrl = uploadedVideos.get(lesson.id);
+      const unlocked = isUnlocked(lesson);
+      const player = document.getElementById("lessonPlayer");
+      if (videoUrl && unlocked) {
+        player.innerHTML = `<video class="lesson-player" controls playsinline preload="metadata" aria-label="${escapeHTML(lesson.title)} video lesson"><source src="${videoUrl}"></video>`;
+      } else if (lesson.example) {
+        player.innerHTML = `<div class="video-placeholder"><div><span aria-hidden="true">▣</span><p>This is a sample tutor profile, not a real lesson. The teacher’s video will appear here after they publish one.</p></div></div>`;
+      } else if (!unlocked) {
+        player.innerHTML = `<div class="video-placeholder"><div><span aria-hidden="true">🔒</span><p>This paid video is locked. Choose access below to view it.</p></div></div>`;
+      } else {
+        player.innerHTML = `<div class="video-placeholder"><div><span aria-hidden="true">▣</span><p>This lesson’s video is only available in the browser session where it was uploaded. The listing is saved on this device.</p></div></div>`;
+      }
+      const access = document.getElementById("lessonAccessAction");
+      if (lesson.example) {
+        access.innerHTML = '<p class="form-notice">Sample profile only. Booking becomes available when a tutor joins and publishes a lesson.</p>';
+      } else {
+        const unlockAction = lesson.price > 0 && !unlocked
+          ? `<button class="button gold" type="button" id="requestAccess">Unlock lesson · ${escapeHTML(formatPrice(lesson))}</button>`
+          : "";
+        access.innerHTML = `<div class="dialog-actions" style="justify-content:start"><button class="button" type="button" id="requestBooking">Request a lesson</button>${unlockAction}</div><p class="form-notice">Requests are pending until the tutor accepts or declines.</p>`;
+        document.getElementById("requestBooking").addEventListener("click", () => beginBooking(lesson));
+        const unlockButton = document.getElementById("requestAccess");
+        if (unlockButton) unlockButton.addEventListener("click", () => {
+          closeDialog("lessonBackdrop");
+          document.getElementById("checkoutTitle").textContent = `Unlock “${lesson.title}”`;
+          document.getElementById("checkoutDetails").textContent = `${formatPrice(lesson)} · Payment simulation only`;
+          openDialog("checkoutBackdrop");
+        });
+      }
+      openDialog("lessonBackdrop");
+    }
+
+    function beginBooking(lesson) {
+      const account = currentAccount();
+      if (!account || account.role !== "learner") {
+        if (!account) {
+          document.querySelector('input[name="role"][value="learner"]').checked = true;
+          openDialog("joinBackdrop");
+          showToast("Join as a learner to request a lesson.");
+        } else {
+          showToast("Learner accounts can request lessons.");
+        }
+        return;
+      }
+      if (!lesson.ownerEmail) {
+        showToast("This tutor profile is not connected to an account yet.");
+        return;
+      }
+      requestedLessonId = lesson.id;
+      const offeredFormats = Array.isArray(lesson.formats) && lesson.formats.length ? lesson.formats : ["virtual"];
+      document.getElementById("bookingTutorName").textContent = `${lesson.creator} · ${lesson.title}`;
+      document.getElementById("bookingFormat").innerHTML = offeredFormats.map(format => {
+        const label = format === "in-person" ? `In person${lesson.location ? ` · ${lesson.location}` : ""}` : "Virtual";
+        return `<option value="${escapeHTML(format)}">${escapeHTML(label)}</option>`;
+      }).join("");
+      document.getElementById("bookingTime").value = "";
+      document.getElementById("bookingMessage").value = "";
+      closeDialog("lessonBackdrop");
+      openDialog("bookingBackdrop");
+    }
+
+    document.querySelectorAll("#publishHero, #publishBand").forEach(button => button.addEventListener("click", () => openDialog("publishBackdrop")));
+    document.getElementById("joinButton").addEventListener("click", () => openDialog("joinBackdrop"));
+    document.getElementById("signInButton").addEventListener("click", () => openDialog("signInBackdrop"));
+    document.getElementById("accountPill").addEventListener("click", () => {
+      dashboardMode = true;
+      updateAccountHeader();
+    });
+    document.getElementById("findTutorsButton").addEventListener("click", () => {
+      dashboardMode = false;
+      updateAccountHeader();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    document.getElementById("dashboardPublishButton").addEventListener("click", () => openDialog("publishBackdrop"));
+    document.getElementById("signOutButton").addEventListener("click", () => {
+      accountData.currentEmail = "";
+      dashboardMode = true;
+      persistAccounts();
+      showToast("Signed out of this demo profile.");
+    });
+    document.querySelectorAll("[data-switch-auth]").forEach(button => button.addEventListener("click", () => {
+      closeDialog(button.closest(".backdrop").id);
+      openDialog(button.dataset.switchAuth === "join" ? "joinBackdrop" : "signInBackdrop");
+    }));
+    document.querySelectorAll("[data-open-terms]").forEach(button => button.addEventListener("click", event => {
+      event.preventDefault();
+      openDialog("termsBackdrop");
+    }));
+    function updateSignupAgreementFields() {
+      const teacher = document.querySelector('#joinForm input[name="role"][value="teacher"]').checked;
+      document.getElementById("teacherTaxAgreement").hidden = !teacher;
+      document.getElementById("acceptTaxTerms").required = teacher;
+      if (!teacher) document.getElementById("acceptTaxTerms").checked = false;
+    }
+    document.querySelectorAll('#joinForm input[name="role"]').forEach(input => input.addEventListener("change", updateSignupAgreementFields));
+    updateSignupAgreementFields();
+    document.getElementById("joinForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const values = new FormData(event.currentTarget);
+      const name = String(values.get("name")).trim();
+      const email = String(values.get("email")).trim().toLowerCase();
+      const role = String(values.get("role"));
+      if (!values.get("acceptSafetyPolicy") || (role === "teacher" && !values.get("acceptTaxTerms"))) {
+        showToast("Accept the platform agreement to continue.");
+        return;
+      }
+      if (accountData.accounts.some(item => item.email === email)) {
+        showToast("A demo profile already uses this email. Sign in instead.");
+        return;
+      }
+      const acceptedAt = new Date().toISOString();
+      accountData.accounts.push({
+        name,
+        email,
+        role,
+        profile: { city: "", topics: "", bio: "" },
+        savedTutors: [],
+        termsAcceptedAt: acceptedAt,
+        termsVersion: "my-sign-draft-1",
+        taxTermsAcceptedAt: role === "teacher" ? acceptedAt : ""
+      });
+      accountData.currentEmail = email;
+      dashboardMode = true;
+      dashboardTab = "overview";
+      persistAccounts();
+      event.currentTarget.reset();
+      updateSignupAgreementFields();
+      closeDialog("joinBackdrop");
+      showToast(`Welcome, ${name}. Your ${role === "teacher" ? "signer / teacher" : "learner"} demo profile is ready.`);
+    });
+    document.getElementById("signInForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const email = String(new FormData(event.currentTarget).get("email")).trim().toLowerCase();
+      const account = accountData.accounts.find(item => item.email === email);
+      if (!account) {
+        showToast("No demo profile found on this device. Join first.");
+        return;
+      }
+      accountData.currentEmail = email;
+      dashboardMode = true;
+      dashboardTab = "overview";
+      persistAccounts();
+      event.currentTarget.reset();
+      closeDialog("signInBackdrop");
+      showToast(`Welcome back, ${account.name}.`);
+    });
+    document.querySelectorAll("[data-close]").forEach(button => button.addEventListener("click", () => closeDialog(button.dataset.close)));
+    document.querySelectorAll(".backdrop").forEach(backdrop => backdrop.addEventListener("click", event => { if (event.target === backdrop) closeDialog(backdrop.id); }));
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") document.querySelectorAll(".backdrop:not([hidden])").forEach(dialog => closeDialog(dialog.id));
+    });
+
+    document.querySelectorAll("[data-category]").forEach(button => button.addEventListener("click", () => {
+      category = button.dataset.category;
+      document.querySelectorAll("[data-category]").forEach(filter => filter.setAttribute("aria-pressed", String(filter === button)));
+      renderLessons();
+    }));
+    document.getElementById("dashboardTabs").addEventListener("click", event => {
+      const tab = event.target.closest("[data-dashboard-tab]");
+      if (!tab) return;
+      dashboardTab = tab.dataset.dashboardTab;
+      renderDashboard();
+    });
+    document.getElementById("dashboardContent").addEventListener("click", event => {
+      const decision = event.target.closest("[data-request-action]");
+      if (decision) {
+        const account = currentAccount();
+        const request = data.requests.find(item => item.id === decision.dataset.requestId);
+        if (!account || account.role !== "teacher" || !request || request.teacherEmail !== account.email || request.status !== "pending") return;
+        request.status = decision.dataset.requestAction;
+        request.respondedAt = new Date().toISOString();
+        persist();
+        renderDashboard();
+        showToast(request.status === "accepted" ? "Lesson request accepted." : "Lesson request declined.");
+        return;
+      }
+      const tab = event.target.closest("[data-dashboard-tab]");
+      if (tab) {
+        dashboardTab = tab.dataset.dashboardTab;
+        renderDashboard();
+        return;
+      }
+      const lessonTab = event.target.closest("[data-dashboard-tab-to-lessons]");
+      if (lessonTab) {
+        dashboardTab = "lessons";
+        renderDashboard();
+        return;
+      }
+      const deleteButton = event.target.closest("[data-delete-lesson]");
+      if (deleteButton) {
+        const lessonId = deleteButton.dataset.deleteLesson;
+        data.lessons = data.lessons.filter(lesson => lesson.id !== lessonId);
+        currentAccount().savedTutors = (currentAccount().savedTutors || []).filter(id => id !== lessonId);
+        uploadedVideos.delete(lessonId);
+        persist();
+        persistAccounts();
+        renderLessons();
+        showToast("Lesson removed from your listings.");
+        return;
+      }
+      const unsaveButton = event.target.closest("[data-unsave-tutor]");
+      if (unsaveButton) {
+        const account = currentAccount();
+        account.savedTutors = (account.savedTutors || []).filter(id => id !== unsaveButton.dataset.unsaveTutor);
+        persistAccounts();
+        renderLessons();
+        return;
+      }
+      const openButton = event.target.closest("[data-open-saved-tutor]");
+      if (openButton) openLesson(lessonById(openButton.dataset.openSavedTutor));
+      if (event.target.closest("#dashboardBrowseButton")) {
+        dashboardMode = false;
+        updateAccountHeader();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    });
+    document.getElementById("dashboardContent").addEventListener("submit", event => {
+      if (event.target.id !== "dashboardProfileForm") return;
+      event.preventDefault();
+      const account = currentAccount();
+      const values = new FormData(event.target);
+      account.name = String(values.get("name")).trim();
+      account.profile = {
+        city: String(values.get("city")).trim(),
+        topics: String(values.get("topics")).trim(),
+        bio: String(values.get("bio")).trim()
+      };
+      persistAccounts();
+      showToast("Your profile has been saved.");
+    });
+    document.getElementById("bookingForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const account = currentAccount();
+      const lesson = lessonById(requestedLessonId);
+      if (!account || account.role !== "learner" || !lesson?.ownerEmail) {
+        showToast("Sign in as a learner to request this lesson.");
+        return;
+      }
+      const values = new FormData(event.currentTarget);
+      const format = String(values.get("format"));
+      const offeredFormats = lesson.formats || ["virtual"];
+      if (!offeredFormats.includes(format)) {
+        showToast("Choose one of this tutor’s available formats.");
+        return;
+      }
+      data.requests.push({
+        id: `request-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        lessonId: lesson.id,
+        lessonTitle: lesson.title,
+        learnerEmail: account.email,
+        learnerName: account.name,
+        teacherEmail: lesson.ownerEmail,
+        teacherName: lesson.creator,
+        format,
+        location: format === "in-person" ? lesson.location : "",
+        preferredTime: String(values.get("preferredTime")),
+        message: String(values.get("message")).trim(),
+        status: "pending",
+        createdAt: new Date().toISOString()
+      });
+      persist();
+      event.currentTarget.reset();
+      closeDialog("bookingBackdrop");
+      dashboardMode = true;
+      dashboardTab = "requests";
+      updateAccountHeader();
+      showToast("Request sent. It will stay pending until the tutor responds.");
+    });
+    document.getElementById("searchInput").addEventListener("input", renderLessons);
+    document.getElementById("sortLessons").addEventListener("change", renderLessons);
+    document.getElementById("lessonGrid").addEventListener("click", event => {
+      const saveButton = event.target.closest("[data-save-tutor]");
+      if (saveButton) {
+        const account = currentAccount();
+        if (!account) {
+          openDialog("joinBackdrop");
+          return;
+        }
+        if (account.role !== "learner") {
+          showToast("Sign in as a learner to save tutors.");
+          return;
+        }
+        if (!Array.isArray(account.savedTutors)) account.savedTutors = [];
+        const tutorId = saveButton.dataset.saveTutor;
+        account.savedTutors = account.savedTutors.includes(tutorId)
+          ? account.savedTutors.filter(id => id !== tutorId)
+          : [...account.savedTutors, tutorId];
+        persistAccounts();
+        renderLessons();
+        return;
+      }
+      const button = event.target.closest("[data-open-lesson]");
+      if (button) openLesson(lessonById(button.dataset.openLesson));
+    });
+    document.getElementById("lessonVideo").addEventListener("change", event => {
+      const file = event.target.files[0];
+      document.getElementById("videoLabel").textContent = file ? `${file.name} · ${(file.size / 1024 / 1024).toFixed(1)} MB` : "Choose a video to upload";
+    });
+    document.querySelectorAll("input[name=access]").forEach(input => input.addEventListener("change", () => {
+      const paid = document.querySelector("input[name=access]:checked").value === "paid";
+      document.getElementById("priceField").hidden = !paid;
+      document.getElementById("lessonPrice").required = paid;
+      document.getElementById("lessonCurrency").required = paid;
+    }));
+
+    function updateMeetingLocationField() {
+      const inPerson = document.querySelector('input[name="formats"][value="in-person"]').checked;
+      document.getElementById("meetingLocationField").hidden = !inPerson;
+      document.getElementById("meetingLocation").required = inPerson;
+    }
+    document.querySelectorAll('input[name="formats"]').forEach(input => input.addEventListener("change", updateMeetingLocationField));
+    updateMeetingLocationField();
+
+    document.getElementById("publishForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const values = new FormData(form);
+      const video = values.get("video");
+      const paid = values.get("access") === "paid";
+      const price = Number(values.get("price"));
+      const formats = values.getAll("formats").map(String);
+      if (!(video instanceof File) || !video.size) { showToast("Choose a video file before publishing."); return; }
+      if (video.size > 100 * 1024 * 1024) { showToast("This demo accepts videos up to 100 MB."); return; }
+      if (paid && (!Number.isFinite(price) || price < 1 || !values.get("currency"))) { showToast("Enter your price and choose a currency."); return; }
+      if (!formats.length) { showToast("Choose virtual or in-person teaching."); return; }
+      if (formats.includes("in-person") && !String(values.get("location")).trim()) { showToast("Add an area for in-person lessons."); return; }
+      const lesson = {
+        id: `creator-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        title: String(values.get("title")).trim(),
+        description: String(values.get("description")).trim(),
+        category: String(values.get("category")),
+        creator: String(values.get("creator")).trim(),
+        ownerEmail: currentAccount()?.role === "teacher" ? currentAccount().email : "",
+        price: paid ? price : 0,
+        currency: paid ? String(values.get("currency")) : "",
+        access: paid ? "paid" : "free",
+        formats,
+        location: String(values.get("location") || "").trim(),
+        duration: "Your video",
+        coverPattern: ["pattern-sage", "pattern-clay", "pattern-blue"][data.lessons.length % 3],
+        coverMark: "S",
+        example: false
+      };
+      uploadedVideos.set(lesson.id, URL.createObjectURL(video));
+      data.lessons.unshift(lesson);
+      persist();
+      renderLessons();
+      form.reset();
+      document.getElementById("priceField").hidden = true;
+      document.getElementById("lessonPrice").required = false;
+      document.getElementById("lessonCurrency").required = false;
+      updateMeetingLocationField();
+      document.getElementById("videoLabel").textContent = "Choose a video to upload";
+      closeDialog("publishBackdrop");
+      category = "My lessons";
+      document.querySelectorAll("[data-category]").forEach(filter => filter.setAttribute("aria-pressed", String(filter.dataset.category === category)));
+      renderLessons();
+      showToast("Lesson published in this browser demo.");
+      if (currentAccount()?.role === "teacher") {
+        dashboardTab = "lessons";
+        dashboardMode = true;
+        updateAccountHeader();
+        document.getElementById("dashboardView").scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        document.getElementById("browse").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+
+    document.getElementById("confirmDemoAccess").addEventListener("click", () => {
+      const lesson = lessonById(activeLessonId);
+      if (!lesson) return;
+      data.unlocked.push(lesson.id);
+      persist();
+      closeDialog("checkoutBackdrop");
+      renderLessons();
+      openLesson(lesson);
+      showToast("Demo access enabled on this device. No payment was taken.");
+    });
+
+    updateAccountHeader();
+    renderLessons();
+  </script>
+</body>
+</html>
