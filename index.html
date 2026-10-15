@@ -555,6 +555,14 @@
       return lessons.map(lesson => `<div class="dashboard-row"><div class="dashboard-avatar" aria-hidden="true">${escapeHTML(lesson.coverMark || "S")}</div><div style="min-width:0;flex:1"><strong>${escapeHTML(lesson.title)}</strong><small>${escapeHTML(lesson.creator)} · ${lesson.access === "paid" ? (lesson.price == null ? "Tutor sets price" : formatPrice(lesson)) : "Free"}</small></div><button class="button outline small" type="button" ${actionAttribute}="${escapeHTML(lesson.id)}">${actionLabel}</button></div>`).join("");
     }
 
+    // Each accepted virtual lesson gets its own Jitsi room. The request id is random and
+    // only visible to the learner and tutor, so the room name cannot be guessed.
+    function videoRoomUrl(request) {
+      const room = `MySign-Lesson-${request.id.replace(/-/g, "")}`;
+      const displayName = JSON.stringify(currentAccount()?.name || "My Sign member");
+      return `https://meet.jit.si/${room}#userInfo.displayName=${encodeURIComponent(displayName)}&config.subject=${encodeURIComponent(JSON.stringify(request.lessonTitle))}`;
+    }
+
     function dashboardRequestRows(requests, teacherView) {
       if (!requests.length) return `<div class="dashboard-empty">${teacherView ? "Lesson requests from learners will appear here." : "Your lesson requests will appear here."}</div>`;
       return requests.map(request => {
@@ -562,10 +570,13 @@
         const timeLabel = request.preferredTime ? new Date(request.preferredTime).toLocaleString() : "Time not set";
         const otherPerson = teacherView ? request.learnerName : request.teacherName;
         const contactEmail = teacherView ? request.learnerEmail : request.teacherEmail;
+        const videoReady = request.status === "accepted" && request.format === "virtual";
         const controls = teacherView && request.status === "pending"
           ? `<div class="dashboard-actions"><span class="request-status pending">Pending</span><button class="button small" type="button" data-request-action="accepted" data-request-id="${escapeHTML(request.id)}">Accept</button><button class="button outline small" type="button" data-request-action="declined" data-request-id="${escapeHTML(request.id)}">Decline</button></div>`
-          : `<span class="request-status ${escapeHTML(request.status)}">${escapeHTML(request.status)}</span>`;
-        return `<div class="dashboard-row"><div class="dashboard-avatar" aria-hidden="true">${escapeHTML((otherPerson || "S").charAt(0).toUpperCase())}</div><div style="min-width:0;flex:1"><strong>${escapeHTML(request.lessonTitle)}</strong><small>${escapeHTML(otherPerson || "Learner")} · ${escapeHTML(formatLabel)} · ${escapeHTML(timeLabel)}</small>${contactEmail ? `<small>Contact: ${escapeHTML(contactEmail)}</small>` : ""}${request.message ? `<small>${escapeHTML(request.message)}</small>` : ""}</div>${controls}</div>`;
+          : videoReady
+            ? `<div class="dashboard-actions"><span class="request-status accepted">accepted</span><a class="button small" href="${escapeHTML(videoRoomUrl(request))}" target="_blank" rel="noopener">🎥 Start video lesson</a></div>`
+            : `<span class="request-status ${escapeHTML(request.status)}">${escapeHTML(request.status)}</span>`;
+        return `<div class="dashboard-row"><div class="dashboard-avatar" aria-hidden="true">${escapeHTML((otherPerson || "S").charAt(0).toUpperCase())}</div><div style="min-width:0;flex:1"><strong>${escapeHTML(request.lessonTitle)}</strong><small>${escapeHTML(otherPerson || "Learner")} · ${escapeHTML(formatLabel)} · ${escapeHTML(timeLabel)}</small>${contactEmail ? `<small>Contact: ${escapeHTML(contactEmail)}</small>` : ""}${request.message ? `<small>${escapeHTML(request.message)}</small>` : ""}${videoReady ? "<small>Private video room for you and your " + (teacherView ? "learner" : "tutor") + ". Open it at the lesson time. Allow camera and microphone when asked.</small>" : ""}</div>${controls}</div>`;
       }).join("");
     }
 
