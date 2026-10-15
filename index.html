@@ -146,37 +146,56 @@
 
     .backdrop { position: fixed; z-index: 10; inset: 0; display: grid; place-items: center; overflow-y: auto; padding: 20px; background: rgb(18 35 29 / 53%); }
     .backdrop[hidden] { display: none; }
-    .dialog { width: min(100%, 520px); max-height: min(90vh, 820px); overflow-y: auto; padding: 23px; border: 1px solid var(--line); border-radius: 8px; background: var(--white); box-shadow: var(--shadow); animation: lift-in 180ms ease both; }
-    .dialog.wide { width: min(100%, 670px); }
-    .dialog-head { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
-    .dialog-head h2 { font-family: "DM Serif Display", Georgia, serif; font-size: 24px; font-weight: 400; }
-    .dialog-head p { margin: 6px 0 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
-    .icon-close { display: grid; width: 32px; height: 32px; flex: 0 0 auto; place-items: center; border: 1px solid var(--line); border-radius: 4px; background: white; font-size: 18px; cursor: pointer; }
-    .field { display: grid; gap: 6px; margin-bottom: 13px; }
-    .field label { font-size: 10px; font-weight: 700; }
-    .field input, .field select, .field textarea { width: 100%; min-height: 39px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--ink); font-size: 11px; }
-    .field textarea { min-height: 74px; resize: vertical; }
-    .field small { color: var(--muted); font-size: 9px; line-height: 1.5; }
-    .role-options { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
-    .role-option { display: flex; align-items: start; gap: 8px; min-height: 68px; padding: 11px; border: 1px solid var(--line); border-radius: 5px; cursor: pointer; }
-    .role-option:has(input:checked) { border-color: var(--green); background: #f4f8f4; }
-    .role-option input { margin-top: 2px; accent-color: var(--green); }
-    .role-option strong { display: block; font-size: 10px; }
-    .role-option span { display: block; margin-top: 4px; color: var(--muted); font-size: 9px; line-height: 1.45; }
-    .inline-link { padding: 0; border: 0; background: transparent; color: var(--green); font-size: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
+    .dialog { width: min(100%, 540px); max-height: min(92vh, 860px); overflow-y: auto; padding: 30px 30px 26px; border: 0; border-top: 5px solid var(--green); border-radius: 16px; background: var(--white); box-shadow: 0 30px 80px rgb(10 32 25 / 28%); animation: lift-in 200ms ease both; }
+    .dialog.wide { width: min(100%, 690px); }
+    .dialog-head { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+    .dialog-head .section-kicker { font-size: 11px; }
+    .dialog-head h2 { margin: 0; font-family: "DM Serif Display", Georgia, serif; font-size: 30px; font-weight: 400; line-height: 1.15; }
+    .dialog-head p { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+    .icon-close { display: grid; width: 36px; height: 36px; flex: 0 0 auto; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: white; color: var(--muted); font-size: 20px; cursor: pointer; transition: background 150ms ease, color 150ms ease; }
+    .icon-close:hover { background: var(--green-soft); color: var(--green); }
+    .field { display: grid; gap: 7px; margin-bottom: 16px; }
+    .field label, .field legend { color: var(--ink); font-size: 13px; font-weight: 700; }
+    .field input, .field select, .field textarea { width: 100%; min-height: 46px; padding: 11px 13px; border: 1.5px solid #dde4dc; border-radius: 9px; background: #fbfcfa; color: var(--ink); font: inherit; font-size: 14px; transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease; }
+    .field input::placeholder, .field textarea::placeholder { color: #9aa6a0; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--green); background: #fff; outline: none; box-shadow: 0 0 0 4px rgb(23 97 75 / 12%); }
+    .field textarea { min-height: 84px; resize: vertical; }
+    .field small { color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .role-options, .price-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .role-option, .price-option { position: relative; display: flex; align-items: flex-start; gap: 12px; padding: 15px 16px; border: 1.5px solid #dde4dc; border-radius: 12px; background: #fff; cursor: pointer; transition: border-color 150ms ease, background 150ms ease, box-shadow 150ms ease, transform 150ms ease; }
+    .role-option:hover, .price-option:hover { border-color: #a9c2b1; transform: translateY(-1px); }
+    .role-option:has(input:checked), .price-option:has(input:checked) { border-color: var(--green); background: #f2f8f4; box-shadow: 0 0 0 4px rgb(23 97 75 / 10%); }
+    .role-option > span, .price-option > span { display: block; flex: 1; min-width: 0; margin: 0; }
+    .role-option strong, .price-option strong { display: block; color: var(--ink); font-size: 14px; line-height: 1.35; }
+    .role-option span span, .price-option span span { display: block; margin-top: 4px; color: var(--muted); font-size: 12.5px; line-height: 1.5; }
+    .role-card { flex-direction: column; gap: 0; padding: 18px; }
+    .role-card > span { width: 100%; }
+    .role-option .role-icon { display: grid; width: 46px; height: 46px; margin: 0 0 12px; place-items: center; border-radius: 50%; background: var(--green-soft); font-size: 23px; line-height: 1; }
+    .role-card:has(input:checked) .role-icon { background: #fff; box-shadow: 0 0 0 1.5px rgb(23 97 75 / 25%); }
+    .field .role-card input { position: absolute; top: 16px; right: 16px; margin: 0; }
+    .field .role-option input, .field .price-option input { flex: 0 0 auto; width: 20px; height: 20px; min-height: 0; margin: 1px 0 0; padding: 0; border: 1.5px solid #b3c2b8; background: #fff; cursor: pointer; appearance: none; -webkit-appearance: none; transition: border-color 150ms ease, background 150ms ease, box-shadow 150ms ease; }
+    .field .role-option input[type="radio"], .field .price-option input[type="radio"] { border-radius: 50%; }
+    .field .role-option input[type="checkbox"], .field .price-option input[type="checkbox"] { border-radius: 6px; }
+    .field .role-option input[type="radio"]:checked, .field .price-option input[type="radio"]:checked { border-color: var(--green); background: var(--green); box-shadow: inset 0 0 0 4px #fff; }
+    .field .role-option input[type="checkbox"]:checked, .field .price-option input[type="checkbox"]:checked { border-color: var(--green); background: var(--green) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 14px no-repeat; }
+    .field .role-option input:focus, .field .price-option input:focus { box-shadow: none; }
+    .field .role-option input[type="radio"]:checked:focus, .field .price-option input[type="radio"]:checked:focus { box-shadow: inset 0 0 0 4px #fff; }
+    .field .role-option input:focus-visible, .field .price-option input:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+    .agreement-option.role-option { padding: 4px 0; border: 0; background: transparent; box-shadow: none; transform: none; }
+    .agreement-option.role-option:has(input:checked) { background: transparent; box-shadow: none; }
+    .agreement-option strong { font-size: 13.5px; }
+    .agreement-option span span { font-size: 12.5px; }
+    .agreement-link { justify-self: start; margin-left: 32px; }
+    .inline-link { padding: 0; border: 0; background: transparent; color: var(--green); font-size: 13px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
     .two-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .price-options { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
-    .price-option { display: flex; align-items: start; gap: 8px; padding: 11px; border: 1px solid var(--line); border-radius: 5px; cursor: pointer; }
-    .price-option:has(input:checked) { border-color: var(--green); background: #f4f8f4; }
-    .price-option input { accent-color: var(--green); }
-    .price-option strong { display: block; font-size: 10px; }
-    .price-option span { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; line-height: 1.4; }
     .drop-zone { display: grid; min-height: 90px; place-items: center; padding: 12px; border: 1px dashed #b9cbb9; border-radius: 5px; background: #f8faf6; text-align: center; cursor: pointer; }
-    .drop-zone strong { font-size: 11px; }
-    .drop-zone span { display: block; margin-top: 5px; color: var(--muted); font-size: 9px; }
+    .drop-zone { border-radius: 12px; }
+    .drop-zone strong { font-size: 14px; }
+    .drop-zone span { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; }
     .drop-zone input { display: none; }
-    .form-notice { margin: 12px 0 0; padding: 10px; border-radius: 4px; background: #f5f2e8; color: #645c44; font-size: 9px; line-height: 1.55; }
-    .dialog-actions { display: flex; justify-content: end; gap: 8px; margin-top: 17px; }
+    .form-notice { margin: 14px 0 0; padding: 12px 14px; border-left: 3px solid var(--gold); border-radius: 8px; background: #faf6ea; color: #5c5338; font-size: 12.5px; line-height: 1.55; }
+    .dialog-actions { display: flex; flex-wrap: wrap; justify-content: end; gap: 10px; margin-top: 22px; }
+    .dialog .dialog-actions .button { min-height: 46px; padding: 0 20px; border-radius: 9px; font-size: 14px; }
     .lesson-player { width: 100%; max-height: 340px; border-radius: 5px; background: #172d29; }
     .video-placeholder { display: grid; min-height: 205px; place-items: center; padding: 25px; border-radius: 5px; background: #eff3ed; color: #586960; text-align: center; }
     .video-placeholder span { display: block; margin-bottom: 8px; font-size: 24px; }
@@ -215,7 +234,12 @@
       .creator-band .button { justify-self: start; }
       footer { flex-direction: column; gap: 8px; }
       .two-fields { grid-template-columns: 1fr; gap: 0; }
-      .dialog { padding: 18px; }
+      .dialog { padding: 22px 18px 18px; border-radius: 14px; }
+      .dialog-head h2 { font-size: 25px; }
+      .field input, .field select, .field textarea { font-size: 16px; }
+      .price-options { grid-template-columns: 1fr; }
+      .role-card { padding: 14px; }
+      .dialog .dialog-actions .button { flex: 1 1 auto; }
     }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
   </style>
@@ -303,11 +327,11 @@
         <div class="field"><label for="joinPassword">Password</label><input id="joinPassword" name="password" type="password" required minlength="8" maxlength="72" autocomplete="new-password"></div>
         <div class="field"><label for="joinCountry">Country</label><select id="joinCountry" name="country" required><option value="" selected disabled>Choose your country</option></select></div>
         <div class="field"><label>Your role</label><div class="role-options">
-          <label class="role-option"><input type="radio" name="role" value="learner" checked><span><strong>Learner</strong><span>Find free and paid lessons.</span></span></label>
-          <label class="role-option"><input type="radio" name="role" value="teacher"><span><strong>Deaf signer / teacher</strong><span>Share lessons with learners.</span></span></label>
+          <label class="role-option role-card"><input type="radio" name="role" value="learner" checked><span><span class="role-icon" aria-hidden="true">📖</span><strong>Learner</strong><span>Find free and paid lessons.</span></span></label>
+          <label class="role-option role-card"><input type="radio" name="role" value="teacher"><span><span class="role-icon" aria-hidden="true">🤟</span><strong>Deaf signer / teacher</strong><span>Share lessons with learners.</span></span></label>
         </div></div>
-        <div class="field"><label class="role-option" style="min-height:0"><input id="acceptSafetyPolicy" name="acceptSafetyPolicy" type="checkbox" required><span><strong>I agree to the platform terms and community rules.</strong><span>Harassment and abuse are prohibited.</span></span></label><button class="inline-link" type="button" data-open-terms>Read the full agreement</button></div>
-        <div class="field" id="teacherTaxAgreement" hidden><label class="role-option" style="min-height:0"><input id="acceptTaxTerms" name="acceptTaxTerms" type="checkbox"><span><strong>I accept responsibility for my own tax and legal obligations.</strong><span>I will follow applicable local tax and business rules for lessons I offer.</span></span></label></div>
+        <div class="field"><label class="role-option agreement-option"><input id="acceptSafetyPolicy" name="acceptSafetyPolicy" type="checkbox" required><span><strong>I agree to the platform terms and community rules.</strong><span>Harassment and abuse are prohibited.</span></span></label><button class="inline-link agreement-link" type="button" data-open-terms>Read the full agreement</button></div>
+        <div class="field" id="teacherTaxAgreement" hidden><label class="role-option agreement-option"><input id="acceptTaxTerms" name="acceptTaxTerms" type="checkbox"><span><strong>I accept responsibility for my own tax and legal obligations.</strong><span>I will follow applicable local tax and business rules for lessons I offer.</span></span></label></div>
         <p class="form-notice">You will see and connect only with tutors and learners in the country you choose. Your country cannot be changed later.</p>
         <div class="dialog-actions"><button class="button outline" type="button" data-switch-auth="signin">Already joined? Sign in</button><button class="button" type="submit">Join</button></div>
       </form>
@@ -351,7 +375,7 @@
           <div class="field"><label for="lessonCategory">Topic</label><select id="lessonCategory" name="category"><option>Everyday life</option><option>Community</option><option>Learning basics</option><option>Stories</option></select></div>
           <div class="field"><label for="creatorName">Your display name</label><input id="creatorName" name="creator" required maxlength="35" placeholder="How learners know you"></div>
         </div>
-        <fieldset class="field" style="padding:0;border:0"><legend style="margin-bottom:7px;font-size:10px;font-weight:700">Teaching formats</legend><div class="price-options">
+        <fieldset class="field" style="padding:0;border:0"><legend style="margin-bottom:7px;padding:0">Teaching formats</legend><div class="price-options">
           <label class="price-option"><input type="checkbox" name="formats" value="virtual" checked><span><strong>Virtual</strong><span>Meet online.</span></span></label>
           <label class="price-option"><input type="checkbox" name="formats" value="in-person"><span><strong>In person</strong><span>Meet face to face.</span></span></label>
         </div></fieldset>
