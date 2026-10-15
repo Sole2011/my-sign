@@ -362,8 +362,28 @@
       <div class="dialog-head"><div><p class="section-kicker">WELCOME BACK</p><h2 id="signInTitle">Sign in</h2><p>Sign in with your email and password.</p></div><button class="icon-close" type="button" data-close="signInBackdrop" aria-label="Close">×</button></div>
       <form id="signInForm">
         <div class="field"><label for="signInEmail">Email address</label><input id="signInEmail" name="email" type="email" required autocomplete="email"></div>
-        <div class="field"><label for="signInPassword">Password</label><input id="signInPassword" name="password" type="password" required autocomplete="current-password"></div>
+        <div class="field"><label for="signInPassword">Password</label><input id="signInPassword" name="password" type="password" required autocomplete="current-password"><button class="inline-link" type="button" id="forgotPasswordButton" style="justify-self:start">Forgot password?</button></div>
         <div class="dialog-actions"><button class="button outline" type="button" data-switch-auth="join">New here? Join</button><button class="button" type="submit">Continue</button></div>
+      </form>
+    </section>
+  </div>
+
+  <div class="backdrop" id="resetBackdrop" hidden>
+    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
+      <div class="dialog-head"><div><p class="section-kicker">FORGOT PASSWORD</p><h2 id="resetTitle">Reset your password</h2><p>Enter your email and we will send you a link to choose a new password.</p></div><button class="icon-close" type="button" data-close="resetBackdrop" aria-label="Close">×</button></div>
+      <form id="resetForm">
+        <div class="field"><label for="resetEmail">Email address</label><input id="resetEmail" name="email" type="email" required autocomplete="email"></div>
+        <div class="dialog-actions"><button class="button outline" type="button" data-switch-auth="signin">Back to sign in</button><button class="button" type="submit">Send reset link</button></div>
+      </form>
+    </section>
+  </div>
+
+  <div class="backdrop" id="newPasswordBackdrop" hidden>
+    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="newPasswordTitle">
+      <div class="dialog-head"><div><p class="section-kicker">NEW PASSWORD</p><h2 id="newPasswordTitle">Choose a new password</h2><p>Use at least 8 characters.</p></div><button class="icon-close" type="button" data-close="newPasswordBackdrop" aria-label="Close">×</button></div>
+      <form id="newPasswordForm">
+        <div class="field"><label for="newPassword">New password</label><input id="newPassword" name="password" type="password" required minlength="8" maxlength="72" autocomplete="new-password"></div>
+        <div class="dialog-actions"><button class="button" type="submit">Save new password</button></div>
       </form>
     </section>
   </div>
@@ -905,6 +925,43 @@
       closeDialog("signInBackdrop");
       showToast("Welcome back.");
     });
+    document.getElementById("forgotPasswordButton").addEventListener("click", () => {
+      document.getElementById("resetEmail").value = document.getElementById("signInEmail").value;
+      closeDialog("signInBackdrop");
+      openDialog("resetBackdrop");
+    });
+    document.getElementById("resetForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      if (!requireDatabase()) return;
+      const form = event.currentTarget;
+      setBusy(form, true);
+      const { error } = await db.auth.resetPasswordForEmail(String(new FormData(form).get("email")).trim().toLowerCase(), {
+        redirectTo: window.location.origin + window.location.pathname
+      });
+      setBusy(form, false);
+      if (error) {
+        showToast(error.message);
+        return;
+      }
+      form.reset();
+      closeDialog("resetBackdrop");
+      showToast("If this email has an account, a reset link is on its way. Check your inbox.");
+    });
+    document.getElementById("newPasswordForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      if (!requireDatabase()) return;
+      const form = event.currentTarget;
+      setBusy(form, true);
+      const { error } = await db.auth.updateUser({ password: String(new FormData(form).get("password")) });
+      setBusy(form, false);
+      if (error) {
+        showToast(error.message);
+        return;
+      }
+      form.reset();
+      closeDialog("newPasswordBackdrop");
+      showToast("Your new password is saved.");
+    });
     document.querySelectorAll("[data-close]").forEach(button => button.addEventListener("click", () => closeDialog(button.dataset.close)));
     document.querySelectorAll(".backdrop").forEach(backdrop => backdrop.addEventListener("click", event => { if (event.target === backdrop) closeDialog(backdrop.id); }));
     document.addEventListener("keydown", event => {
@@ -1168,6 +1225,7 @@
       db.auth.onAuthStateChange((event, newSession) => {
         session = newSession;
         if (event === "TOKEN_REFRESHED") return;
+        if (event === "PASSWORD_RECOVERY") openDialog("newPasswordBackdrop");
         // Supabase recommends not calling the client directly inside this callback.
         setTimeout(loadAccountData, 0);
       });
