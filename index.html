@@ -745,7 +745,12 @@
         return;
       }
       if (dashboardTab === "profile") {
-        content.innerHTML = `<section class="dashboard-panel"><h2>Profile picture</h2><div class="profile-photo-row"><div class="profile-photo" aria-hidden="true">${avatarHTML(account.id, account.name)}</div><div class="profile-photo-actions"><label class="button outline small" for="avatarInput">${account.avatarPath ? "Change picture" : "Upload picture"}</label><input id="avatarInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>${account.avatarPath ? '<button class="inline-link" type="button" data-remove-avatar>Remove picture</button>' : ""}<small>JPG, PNG, or WebP. Members in ${escapeHTML(country)} can see it. A clear photo of your face helps people trust you.</small></div></div></section>${dashboardProfileMarkup(account)}<section class="dashboard-panel danger-panel"><h2>Delete account</h2><p class="section-intro">Permanently delete your account, profile, picture, lessons, videos, and lesson requests. This cannot be undone.</p><button class="button danger small" type="button" data-delete-account>Delete my account</button></section>`;
+        content.innerHTML = `<section class="dashboard-panel"><h2>Profile picture</h2><div class="profile-photo-row"><div class="profile-photo" aria-hidden="true">${avatarHTML(account.id, account.name)}</div><div class="profile-photo-actions"><label class="button outline small" for="avatarInput">${account.avatarPath ? "Change picture" : "Upload picture"}</label><input id="avatarInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>${account.avatarPath ? '<button class="inline-link" type="button" data-remove-avatar>Remove picture</button>' : ""}<small>JPG, PNG, or WebP. Members in ${escapeHTML(country)} can see it. A clear photo of your face helps people trust you.</small></div></div></section>${dashboardProfileMarkup(account)}<section class="dashboard-panel"><h2>Change password</h2><form class="profile-form" id="changePasswordForm">
+          <div class="field"><label for="currentPassword">Current password</label><input id="currentPassword" name="currentPassword" type="password" required autocomplete="current-password"></div>
+          <div class="field"><label for="changeNewPassword">New password</label><input id="changeNewPassword" name="newPassword" type="password" required minlength="8" maxlength="72" autocomplete="new-password"><small>At least 8 characters.</small></div>
+          <div class="field"><label for="changeConfirmPassword">Repeat new password</label><input id="changeConfirmPassword" name="confirmPassword" type="password" required minlength="8" maxlength="72" autocomplete="new-password"></div>
+          <button class="button" type="submit">Change password</button>
+        </form></section><section class="dashboard-panel danger-panel"><h2>Delete account</h2><p class="section-intro">Permanently delete your account, profile, picture, lessons, videos, and lesson requests. This cannot be undone.</p><button class="button danger small" type="button" data-delete-account>Delete my account</button></section>`;
         return;
       }
       if (dashboardTab === "community") {
@@ -1316,6 +1321,33 @@
       dashboardTab = "overview";
       await db.auth.signOut({ scope: "local" });
       showToast("Your account has been deleted.");
+    });
+    document.getElementById("dashboardContent").addEventListener("submit", async event => {
+      if (event.target.id !== "changePasswordForm" || !account) return;
+      event.preventDefault();
+      const form = event.target;
+      const values = new FormData(form);
+      const newPassword = String(values.get("newPassword"));
+      if (newPassword !== String(values.get("confirmPassword"))) {
+        showToast("The new passwords do not match.");
+        return;
+      }
+      setBusy(form, true);
+      // Check the current password first, so someone at an unlocked device cannot change it.
+      const check = await db.auth.signInWithPassword({ email: account.email, password: String(values.get("currentPassword")) });
+      if (check.error) {
+        setBusy(form, false);
+        showToast("Your current password is not correct.");
+        return;
+      }
+      const { error } = await db.auth.updateUser({ password: newPassword });
+      setBusy(form, false);
+      if (error) {
+        showToast(error.message);
+        return;
+      }
+      form.reset();
+      showToast("Your password has been changed.");
     });
     document.getElementById("dashboardContent").addEventListener("submit", async event => {
       if (event.target.id !== "dashboardProfileForm") return;
