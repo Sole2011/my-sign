@@ -41,6 +41,18 @@
     .top-nav a:hover { color: var(--green); }
     .top-actions { display: flex; align-items: center; gap: 10px; }
     .account-pill { max-width: 145px; overflow: hidden; color: #53655b; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .bell-button { position: relative; display: grid; width: 36px; height: 36px; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: #fff; font-size: 16px; cursor: pointer; }
+    .bell-button:hover { background: var(--green-soft); }
+    .bell-count { position: absolute; top: -4px; right: -4px; min-width: 19px; height: 19px; padding: 0 5px; border-radius: 99px; background: var(--red); color: #fff; font-size: 10.5px; font-weight: 700; line-height: 19px; text-align: center; }
+    .notification-item { display: grid; width: 100%; gap: 4px; padding: 13px 14px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+    .notification-item:hover { background: #f7faf7; }
+    .notification-item.unread { background: #f2f8f4; box-shadow: inset 3px 0 0 var(--green); }
+    .notification-item strong { font-size: 14px; }
+    .notification-item span { color: #3d4f47; font-size: 13px; line-height: 1.5; white-space: pre-line; }
+    .notification-item small { color: var(--muted); font-size: 11.5px; }
+    .announcement { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin: 0 0 16px; padding: 16px 18px; border: 1px solid #eadfba; border-radius: 12px; background: linear-gradient(135deg, #fbf6e6, #f2f8f4); }
+    .announcement strong { font-size: 15px; }
+    .announcement p { margin: 6px 0 0; color: #3d4f47; font-size: 13.5px; line-height: 1.55; white-space: pre-line; }
     .account-pill { padding: 7px 9px; border: 1px solid var(--line); border-radius: 5px; background: white; cursor: pointer; }
     .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 15px; border: 1px solid transparent; border-radius: 5px; background: var(--green); color: #fff; font-size: 12px; font-weight: 700; text-decoration: none; cursor: pointer; transition: background 150ms ease, transform 150ms ease; }
     .button:hover { transform: translateY(-1px); background: var(--green-dark); }
@@ -317,6 +329,7 @@
       <a href="#teach">For signers</a>
     </nav>
     <div class="top-actions">
+      <button class="bell-button" id="notificationsButton" type="button" hidden aria-label="Notifications"><span aria-hidden="true">🔔</span><span class="bell-count" id="notificationCount" hidden></span></button>
       <button class="account-pill" id="accountPill" type="button" hidden></button>
       <button class="button outline small" id="signOutButton" type="button" hidden>Sign out</button>
       <button class="button small" id="joinButton" type="button">Join</button>
@@ -382,6 +395,7 @@
           <div><p class="section-kicker" id="dashboardRole">MY SIGN DASHBOARD</p><h1 id="dashboardTitle">Welcome back</h1><p id="dashboardIntro"></p></div>
           <div class="dashboard-actions"><button class="button outline small" id="findTutorsButton" type="button">Find tutors</button><button class="button small" id="dashboardPublishButton" type="button" hidden>+ Add a lesson</button></div>
         </div>
+        <div id="announcementArea"></div>
         <nav class="dashboard-tabs" id="dashboardTabs" aria-label="Dashboard sections"></nav>
         <div id="dashboardContent"></div>
         <section class="conduct-policy" aria-labelledby="dashboardSafetyTitle"><h2 id="dashboardSafetyTitle">Community safety</h2><p>Harassment is strictly prohibited, including threats, sexual harassment, stalking, discrimination, abuse, and repeated unwanted contact. Anyone found to have violated this rule will be removed from the platform. Credible threats or suspected criminal conduct will be referred to law enforcement where appropriate and permitted by law.</p></section>
@@ -535,6 +549,13 @@
     </section>
   </div>
 
+  <div class="backdrop" id="notificationsBackdrop" hidden>
+    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="notificationsTitle">
+      <div class="dialog-head"><div><p class="section-kicker">NOTIFICATIONS</p><h2 id="notificationsTitle">What's new</h2></div><button class="icon-close" type="button" data-close="notificationsBackdrop" aria-label="Close">×</button></div>
+      <div id="notificationsList"></div>
+    </section>
+  </div>
+
   <div class="backdrop" id="recordPaymentBackdrop" hidden>
     <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="recordPaymentTitle">
       <div class="dialog-head"><div><p class="section-kicker">PAYMENT RECEIVED</p><h2 id="recordPaymentTitle">Record payment</h2><p id="recordPaymentIntro"></p></div><button class="icon-close" type="button" data-close="recordPaymentBackdrop" aria-label="Close">×</button></div>
@@ -677,6 +698,9 @@
     let paymentDetails = {};
     let avatarUrls = {};
     let reviews = [];
+    let notifications = [];
+    let announcements = [];
+    const DISMISSED_KEY = "my-sign-dismissed-announcements";
     let category = "All";
     let activeLessonId = null;
     let toastTimeout;
@@ -707,6 +731,8 @@
         paymentDetails = {};
         avatarUrls = {};
         reviews = [];
+        notifications = [];
+        announcements = [];
         updateAccountHeader();
         renderLessons();
         return;
@@ -721,17 +747,21 @@
         db.from("teacher_payment_details").select("teacher_id, details"),
         db.from("admins").select("user_id").eq("user_id", userId).maybeSingle(),
         db.from("reviews").select("*").order("created_at", { ascending: false }),
+        db.from("notifications").select("*").order("created_at", { ascending: false }).limit(30),
+        db.from("announcements").select("*").order("created_at", { ascending: false }),
       ]);
-      const [profileResult, lessonResult, requestResult, memberResult, savedResult, paymentResult, adminResult, reviewResult] = results;
+      const [profileResult, lessonResult, requestResult, memberResult, savedResult, paymentResult, adminResult, reviewResult, notificationResult, announcementResult] = results;
       if (results.some(result => result.error)) showToast("Could not load everything. Please refresh the page.");
       const row = profileResult.data;
-      account = row ? { id: row.id, email: session.user.email, name: row.name, role: row.role, country: row.country, avatarPath: row.avatar_path, suspended: Boolean(row.suspended_at), isAdmin: Boolean(adminResult.data), profile: { city: row.city, topics: row.topics, bio: row.bio } } : null;
+      account = row ? { id: row.id, email: session.user.email, name: row.name, role: row.role, country: row.country, avatarPath: row.avatar_path, emailNotifications: row.email_notifications !== false, suspended: Boolean(row.suspended_at), isAdmin: Boolean(adminResult.data), profile: { city: row.city, topics: row.topics, bio: row.bio } } : null;
       if (!row && !profileResult.error) showToast("Your profile could not be found.");
       lessons = (lessonResult.data || []).map(toLesson);
       requests = (requestResult.data || []).map(toRequest);
       members = (memberResult.data || []).filter(member => member.id !== userId);
       savedTutors = (savedResult.data || []).map(item => item.lesson_id);
       paymentDetails = Object.fromEntries((paymentResult.data || []).map(item => [item.teacher_id, item.details]));
+      notifications = notificationResult.data || [];
+      announcements = announcementResult.data || [];
       reviews = (reviewResult.data || []).map(item => ({ id: item.id, requestId: item.request_id, reviewerId: item.reviewer_id, revieweeId: item.reviewee_id, rating: item.rating, recommend: item.recommend, feedback: item.feedback, createdAt: item.created_at }));
       await loadAvatarUrls([...(row ? [{ id: row.id, avatar_path: row.avatar_path }] : []), ...members]);
       updateAccountHeader();
@@ -791,6 +821,8 @@
       document.querySelector(".top-nav").hidden = showDashboard;
       document.querySelectorAll(".public-only").forEach(section => { section.hidden = showDashboard; });
       document.getElementById("dashboardView").hidden = !showDashboard;
+      document.getElementById("notificationsButton").hidden = !account;
+      updateNotificationCount();
       if (account && showDashboard) renderDashboard();
     }
 
@@ -804,6 +836,7 @@
         <div class="field"><label for="profileTopics">${teacher ? "Subjects you teach" : "What you want to learn"}</label><input id="profileTopics" name="topics" value="${escapeHTML(profile.topics || "")}" maxlength="120" placeholder="e.g. Everyday conversation"></div>
         ${teacher ? `<div class="field"><label for="profilePayment">How learners can pay you</label><textarea id="profilePayment" name="payment" maxlength="300" placeholder="e.g. Telebirr: 09XX XXX XXX (Your name)&#10;CBE account: 1000XXXXXXXX (Your name)">${escapeHTML(paymentDetails[account.id] || "")}</textarea><small>Only learners whose request you accept can see this.</small></div>` : ""}
         <div class="field"><label for="profileBio">About you</label><textarea id="profileBio" name="bio" maxlength="500" placeholder="A short introduction">${escapeHTML(profile.bio || "")}</textarea></div>
+        <div class="field"><label class="role-option agreement-option"><input name="emailNotifications" type="checkbox" ${account.emailNotifications ? "checked" : ""}><span><strong>Email me about my lessons</strong><span>New requests, accepted lessons, new times, payments, and reviews.</span></span></label></div>
         <button class="button" type="submit">Save profile</button>
       </form></section>`;
     }
@@ -944,6 +977,7 @@
       document.getElementById("dashboardTabs").innerHTML = tabs.map(tab => `<button class="dashboard-tab" type="button" data-dashboard-tab="${tab.id}" aria-selected="${tab.id === dashboardTab}">${tab.label}</button>`).join("");
 
       const content = document.getElementById("dashboardContent");
+      renderAnnouncements();
       if (account.suspended) {
         document.getElementById("dashboardTabs").innerHTML = "";
         document.getElementById("dashboardPublishButton").hidden = true;
@@ -1033,6 +1067,48 @@
 
     function recommendCards(items) {
       return items.map(({ tutor, why }) => `<div class="recommend-card"><div class="dashboard-avatar" aria-hidden="true">${avatarHTML(tutor.id, tutor.name)}</div><div class="recommend-text"><strong>${escapeHTML(tutor.name)}</strong>${ratingSummary(tutor.id) ? `<small class="recommend-rating">★ ${ratingSummary(tutor.id).average.toFixed(1)} (${ratingSummary(tutor.id).count} reviews)</small>` : ""}<small>${escapeHTML([tutor.city, tutor.topics].filter(Boolean).join(" · ") || "Sign language tutor")}</small><span class="recommend-why">${escapeHTML(why)}</span></div><button class="button small" type="button" data-connect-tutor="${escapeHTML(tutor.id)}" data-connect-name="${escapeHTML(tutor.name)}">Connect</button></div>`).join("");
+    }
+
+    function dismissedAnnouncements() {
+      try { return JSON.parse(localStorage.getItem(DISMISSED_KEY)) || []; } catch { return []; }
+    }
+
+    function renderAnnouncements() {
+      const dismissed = dismissedAnnouncements();
+      const visible = announcements.filter(item => item.active && !dismissed.includes(item.id) && (item.audience === "all" || item.audience === account?.role));
+      document.getElementById("announcementArea").innerHTML = visible.map(item => `<section class="announcement" role="status"><div><strong>📣 ${escapeHTML(item.title)}</strong>${item.body ? `<p>${escapeHTML(item.body)}</p>` : ""}</div><button class="icon-close" type="button" data-dismiss-announcement="${escapeHTML(item.id)}" aria-label="Close announcement">×</button></section>`).join("");
+    }
+
+    function updateNotificationCount() {
+      const unread = notifications.filter(item => !item.read_at).length;
+      const badge = document.getElementById("notificationCount");
+      badge.hidden = !unread;
+      badge.textContent = unread > 9 ? "9+" : String(unread);
+      document.getElementById("notificationsButton").setAttribute("aria-label", unread ? `Notifications, ${unread} new` : "Notifications");
+    }
+
+    async function refreshNotifications() {
+      if (!db || !session || !account) return;
+      const { data } = await db.from("notifications").select("*").order("created_at", { ascending: false }).limit(30);
+      if (!data) return;
+      const before = notifications.filter(item => !item.read_at).length;
+      notifications = data;
+      const after = notifications.filter(item => !item.read_at).length;
+      updateNotificationCount();
+      if (after > before) {
+        showToast(`🔔 ${notifications[0].title}`);
+        await loadAccountData();
+      }
+    }
+
+    function announcementsAdminHTML() {
+      const rows = announcements.map(item => `<div class="dashboard-row"><div style="min-width:0;flex:1"><strong>${escapeHTML(item.title)}</strong>${item.body ? `<small>${escapeHTML(item.body)}</small>` : ""}<small>${{ all: "Everyone", teacher: "Teachers only", learner: "Learners only" }[item.audience]} · ${escapeHTML(formatDateTime(item.created_at))} · ${item.active ? "Showing" : "Stopped"}</small></div><div class="dashboard-actions"><button class="button outline small" type="button" data-toggle-announcement="${escapeHTML(item.id)}" data-active="${item.active ? "false" : "true"}">${item.active ? "Stop showing" : "Show again"}</button><button class="inline-link small-link" type="button" data-delete-announcement="${escapeHTML(item.id)}">Delete</button></div></div>`).join("");
+      return `<section class="dashboard-panel"><h2>Announcements</h2><p class="section-intro">Members see announcements at the top of their dashboard until they close them.</p><form class="profile-form" id="announcementForm">
+        <div class="field"><label for="announcementTitle">Title</label><input id="announcementTitle" name="title" required maxlength="100" placeholder="e.g. New: rate your tutor after each lesson"></div>
+        <div class="field"><label for="announcementBody">Message</label><textarea id="announcementBody" name="body" maxlength="1000" placeholder="Explain the update in a few simple sentences."></textarea></div>
+        <div class="field"><label for="announcementAudience">Who should see it?</label><select id="announcementAudience" name="audience"><option value="all">Everyone</option><option value="teacher">Teachers only</option><option value="learner">Learners only</option></select></div>
+        <button class="button" type="submit">Post announcement</button>
+      </form>${rows ? `<div style="margin-top:16px">${rows}</div>` : ""}</section>`;
     }
 
     function ratingSummary(userId) {
@@ -1489,7 +1565,7 @@
           ${report.status === "open" ? `<button class="button outline small" type="button" data-review-report="${escapeHTML(report.report_id)}">Mark reviewed</button>` : ""}
           ${report.reported_id ? `<button class="button ${report.reported_suspended ? "outline " : ""}small" type="button" data-suspend-user="${escapeHTML(report.reported_id)}" data-suspend="${report.reported_suspended ? "false" : "true"}" data-suspend-name="${escapeHTML(report.reported_name)}">${report.reported_suspended ? "Unsuspend" : "Suspend user"}</button>` : ""}
         </div></div>`).join("");
-      content.innerHTML = `<section class="dashboard-panel"><h2>Reports${open ? ` (${open} open)` : ""}</h2><p class="section-intro">Reports from all countries. Suspended members are hidden from everyone and cannot use My Sign. To delete an account completely, use Supabase → Authentication → Users.</p>${rows || '<div class="dashboard-empty">No reports yet.</div>'}</section>`;
+      content.innerHTML = `${announcementsAdminHTML()}<section class="dashboard-panel"><h2>Reports${open ? ` (${open} open)` : ""}</h2><p class="section-intro">Reports from all countries. Suspended members are hidden from everyone and cannot use My Sign. To delete an account completely, use Supabase → Authentication → Users.</p>${rows || '<div class="dashboard-empty">No reports yet.</div>'}</section>`;
     }
 
     document.querySelectorAll("[data-close]").forEach(button => button.addEventListener("click", () => closeDialog(button.dataset.close)));
@@ -1762,6 +1838,65 @@
       document.getElementById("reviewsList").innerHTML = reviewListHTML(reviews.filter(review => review.revieweeId === userId), account?.id === userId);
       openDialog("reviewsBackdrop");
     });
+    document.getElementById("notificationsButton").addEventListener("click", async () => {
+      const list = document.getElementById("notificationsList");
+      list.innerHTML = notifications.length
+        ? notifications.map(item => `<button class="notification-item${item.read_at ? "" : " unread"}" type="button" data-open-notification><strong>${escapeHTML(item.title)}</strong>${item.body ? `<span>${escapeHTML(item.body)}</span>` : ""}<small>${escapeHTML(formatDateTime(item.created_at))}</small></button>`).join("")
+        : '<div class="dashboard-empty">No notifications yet. You will see new requests, answers, and payments here.</div>';
+      openDialog("notificationsBackdrop");
+      if (notifications.some(item => !item.read_at)) {
+        const now = new Date().toISOString();
+        await db.from("notifications").update({ read_at: now }).eq("user_id", account.id).is("read_at", null);
+        notifications = notifications.map(item => item.read_at ? item : { ...item, read_at: now });
+        updateNotificationCount();
+      }
+    });
+    document.getElementById("notificationsList").addEventListener("click", event => {
+      if (!event.target.closest("[data-open-notification]")) return;
+      closeDialog("notificationsBackdrop");
+      dashboardMode = true;
+      dashboardTab = "requests";
+      updateAccountHeader();
+    });
+    document.addEventListener("click", async event => {
+      const dismiss = event.target.closest("[data-dismiss-announcement]");
+      if (dismiss) {
+        localStorage.setItem(DISMISSED_KEY, JSON.stringify([...dismissedAnnouncements(), dismiss.dataset.dismissAnnouncement]));
+        renderAnnouncements();
+        return;
+      }
+      const toggle = event.target.closest("[data-toggle-announcement]");
+      if (toggle) {
+        const { error } = await db.from("announcements").update({ active: toggle.dataset.active === "true" }).eq("id", toggle.dataset.toggleAnnouncement);
+        if (error) showToast(error.message);
+        await loadAccountData();
+        return;
+      }
+      const remove = event.target.closest("[data-delete-announcement]");
+      if (remove) {
+        if (!window.confirm("Delete this announcement?")) return;
+        const { error } = await db.from("announcements").delete().eq("id", remove.dataset.deleteAnnouncement);
+        if (error) showToast(error.message);
+        await loadAccountData();
+      }
+    });
+    document.getElementById("dashboardContent").addEventListener("submit", async event => {
+      if (event.target.id !== "announcementForm") return;
+      event.preventDefault();
+      const form = event.target;
+      const values = new FormData(form);
+      setBusy(form, true);
+      const { error } = await db.from("announcements").insert({ title: String(values.get("title")).trim(), body: String(values.get("body")).trim(), audience: String(values.get("audience")) });
+      setBusy(form, false);
+      if (error) {
+        showToast(error.message);
+        return;
+      }
+      await loadAccountData();
+      showToast("Announcement posted. Members will see it in their dashboard.");
+    });
+    // Check for new notifications every minute while the page is open.
+    setInterval(() => { if (!document.hidden) refreshNotifications(); }, 60 * 1000);
     document.getElementById("recordPaymentForm").addEventListener("submit", async event => {
       event.preventDefault();
       if (!requireDatabase() || !account) return;
@@ -1960,7 +2095,8 @@
         name: String(values.get("name")).trim(),
         city: String(values.get("city")).trim(),
         topics: String(values.get("topics")).trim(),
-        bio: String(values.get("bio")).trim()
+        bio: String(values.get("bio")).trim(),
+        email_notifications: Boolean(values.get("emailNotifications"))
       }).eq("id", account.id);
       const paymentError = !error && account.role === "teacher"
         ? (await db.from("teacher_payment_details").upsert({ teacher_id: account.id, details: String(values.get("payment") || "").trim(), updated_at: new Date().toISOString() })).error
