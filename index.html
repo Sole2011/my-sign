@@ -234,6 +234,7 @@
     .agreement-option strong { font-size: 13.5px; }
     .agreement-option span span { font-size: 12.5px; }
     .agreement-link { justify-self: start; margin-left: 32px; color: var(--muted); font-size: 13px; }
+    .inline-link.small-link { font-size: 12px; font-weight: 600; }
     .inline-link.receipt-link { display: block; margin-top: 6px; font-size: 12px; }
     .inline-link.report-link { display: block; margin-top: 8px; color: var(--muted); font-size: 11.5px; font-weight: 600; }
     .inline-link.report-link:hover { color: var(--red); }
@@ -418,7 +419,7 @@
         <p><strong>Platform role.</strong> My Sign provides a place to discover tutors and exchange requests. To the extent permitted by law, My Sign is not responsible for independent user conduct or arrangements. Nothing in this agreement removes rights or liability that cannot legally be excluded.</p>
         <p><strong>Age.</strong> Members must be 18 or older.</p>
         <p><strong>Your country.</strong> Members choose their country when joining and can only see and contact tutors and learners in that same country.</p>
-        <p><strong>Payments.</strong> Learners pay teachers directly (for example by Telebirr, CBE Birr, or bank transfer) after a teacher accepts a request. My Sign does not handle or hold this money. Teachers confirm payment on the site to unlock paid lesson videos.</p>
+        <p><strong>Payments.</strong> Learners pay teachers directly after a teacher accepts a request. My Sign does not handle or hold this money. Teachers confirm payment on the site to unlock paid lesson videos.</p>
         <p><strong>Reports and suspension.</strong> Members can report other members. My Sign administrators review reports and may suspend or remove accounts that break these rules.</p>
         <p><strong>Prototype.</strong> Accounts, lessons, and requests are stored online. Booking notifications are not connected yet.</p>
       </div>
@@ -534,6 +535,19 @@
     </section>
   </div>
 
+  <div class="backdrop" id="recordPaymentBackdrop" hidden>
+    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="recordPaymentTitle">
+      <div class="dialog-head"><div><p class="section-kicker">PAYMENT RECEIVED</p><h2 id="recordPaymentTitle">Record payment</h2><p id="recordPaymentIntro"></p></div><button class="icon-close" type="button" data-close="recordPaymentBackdrop" aria-label="Close">×</button></div>
+      <form id="recordPaymentForm">
+        <input type="hidden" name="requestId">
+        <div class="field"><label for="recordMethod">How were you paid?</label><select id="recordMethod" name="method" required><option value="" disabled>Choose</option><option value="telebirr">Telebirr</option><option value="cbe_birr">CBE Birr</option><option value="mpesa">M-Pesa</option><option value="bank">Bank transfer</option><option value="cash">Cash (in person)</option><option value="other">Other</option></select></div>
+        <div class="field"><label for="recordReference">Transaction number</label><input id="recordReference" name="reference" maxlength="100" placeholder="e.g. the number in your Telebirr or bank SMS"><small>Saved with this lesson so you can find it later. Leave empty for cash.</small></div>
+        <p class="form-notice">After you save, the lesson shows as paid and the learner can watch the paid lesson video.</p>
+        <div class="dialog-actions"><button class="button outline" type="button" data-close="recordPaymentBackdrop">Cancel</button><button class="button" type="submit">Save payment</button></div>
+      </form>
+    </section>
+  </div>
+
   <div class="backdrop" id="paymentProofBackdrop" hidden>
     <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="paymentProofTitle">
       <div class="dialog-head"><div><p class="section-kicker">PAYMENT PROOF</p><h2 id="paymentProofTitle">I've paid my tutor</h2><p id="paymentProofIntro"></p></div><button class="icon-close" type="button" data-close="paymentProofBackdrop" aria-label="Close">×</button></div>
@@ -609,7 +623,7 @@
         <p><strong>Why we use it.</strong> To create your account, show you tutors and learners in your country, let you request, accept, and hold lessons, send account emails (like confirming your email or resetting your password), and keep the community safe.</p>
         <p><strong>Who can see what.</strong> Members in your country can see your name, profile picture, role, city, topics, and bio. Your email address is shared only with the other person in a lesson request (a teacher sees the learner's email; a learner sees the teacher's email after the teacher accepts). Teacher payment details are shown only to learners whose request the teacher accepted. Members in other countries cannot see you. Reports are seen only by My Sign administrators.</p>
         <p><strong>Services we use.</strong> Supabase stores accounts, lessons, and videos. Resend sends our emails. Video lessons happen on Jitsi Meet at meet.ffmuc.net, a free service run by Freifunk München in Germany, which has its own privacy policy. The website is hosted on GitHub Pages and loads fonts from Google Fonts. These providers may store or process data outside Ethiopia, including in Europe and the United States.</p>
-        <p><strong>Payments.</strong> My Sign does not collect or store card or bank logins. Learners pay teachers directly using the details the teacher provides.</p>
+        <p><strong>Payments.</strong> My Sign does not handle payments. Learners pay teachers directly.</p>
         <p><strong>How long we keep it.</strong> We keep your information while your account is open. When you delete your account, we delete your profile, lessons, videos, and requests, except where we must keep something to handle a safety report or meet a legal obligation.</p>
         <p><strong>Your choices and rights.</strong> You can see and edit your profile at any time in your dashboard, and delete your account yourself under My profile → Delete account. You can also ask us for a copy of your information, to correct it, or to delete your account by emailing <a href="mailto:support@accessedsolution.com">support@accessedsolution.com</a>.</p>
         <p><strong>Age.</strong> You must be 18 or older to join My Sign. We do not knowingly collect information from anyone under 18. If we learn that a member is under 18, we will close the account.</p>
@@ -680,7 +694,7 @@
     }
 
     function toRequest(row) {
-      return { id: row.id, lessonId: row.lesson_id, lessonTitle: row.lesson_title, learnerId: row.learner_id, learnerName: row.learner_name, learnerEmail: row.learner_email, teacherId: row.teacher_id, teacherName: row.teacher_name, teacherEmail: row.teacher_email, format: row.format, location: row.location, preferredTime: row.preferred_time, message: row.message, status: row.status, paidAt: row.paid_at, proposedBy: row.proposed_by, proposedTime: row.proposed_time, proposedMessage: row.proposed_message, proposalStatus: row.proposal_status, paymentMethod: row.payment_method, paymentReference: row.payment_reference, paymentProofPath: row.payment_proof_path, paymentSubmittedAt: row.payment_submitted_at, paymentRejectedAt: row.payment_rejected_at, paymentRejectNote: row.payment_reject_note };
+      return { id: row.id, lessonId: row.lesson_id, lessonTitle: row.lesson_title, learnerId: row.learner_id, learnerName: row.learner_name, learnerEmail: row.learner_email, teacherId: row.teacher_id, teacherName: row.teacher_name, teacherEmail: row.teacher_email, format: row.format, location: row.location, preferredTime: row.preferred_time, message: row.message, status: row.status, paidAt: row.paid_at, proposedBy: row.proposed_by, proposedTime: row.proposed_time, proposedMessage: row.proposed_message, proposalStatus: row.proposal_status, paymentMethod: row.payment_method, paymentReference: row.payment_reference, paymentProofPath: row.payment_proof_path, paymentSubmittedAt: row.payment_submitted_at, paymentRejectedAt: row.payment_rejected_at, paymentRejectNote: row.payment_reject_note, paymentLater: row.payment_later };
     }
 
     async function loadAccountData() {
@@ -850,7 +864,8 @@
         }
         if (paidLesson && request.paidAt) {
           actions.push('<span class="request-status accepted">✓ Paid</span>');
-          paymentNote = `<small class="payment-note done">${teacherView ? "You confirmed this payment." : "Your tutor confirmed your payment. The lesson video is unlocked."}</small>`;
+          const savedPayment = [PAYMENT_METHODS[request.paymentMethod], request.paymentReference ? `Transaction: ${request.paymentReference}` : "", formatDateTime(request.paidAt)].filter(Boolean).join(" · ");
+          paymentNote = `<small class="payment-note done">${teacherView ? "You recorded this payment." : "Your tutor confirmed your payment. The lesson video is unlocked."}\n${escapeHTML(savedPayment)}</small>`;
         } else if (paidLesson) {
           const price = lesson.price ? escapeHTML(formatPrice(lesson)) : "";
           const proofSent = request.paymentSubmittedAt && !(request.paymentRejectedAt && new Date(request.paymentRejectedAt) > new Date(request.paymentSubmittedAt));
@@ -862,19 +877,28 @@
           if (teacherView) {
             if (proofSent) {
               paymentNote = `<small class="payment-note"><strong>${escapeHTML(request.learnerName)} says they paid${price ? ` ${price}` : ""}:</strong>\n${proofSummary}\nCheck your Telebirr, CBE Birr, or bank account, then confirm.</small>${receiptButton}`;
-              actions.push(`<button class="button small" type="button" data-mark-paid="${escapeHTML(request.id)}">Confirm payment received</button><button class="button outline small" type="button" data-reject-payment="${escapeHTML(request.id)}">I didn't receive it</button>`);
+              actions.push(`<button class="button small" type="button" data-mark-paid="${escapeHTML(request.id)}" data-method="${escapeHTML(request.paymentMethod || "")}" data-reference="${escapeHTML(request.paymentReference || "")}" data-learner="${escapeHTML(request.learnerName)}" data-price="${price}">Confirm payment received</button><button class="button outline small" type="button" data-reject-payment="${escapeHTML(request.id)}">I didn't receive it</button>`);
             } else {
-              paymentNote = `<small class="payment-note">${proofRejected ? "You said you did not receive the payment. Waiting for the learner to check and send proof again." : `Waiting for ${escapeHTML(request.learnerName)} to pay you${price ? ` ${price}` : ""} and send proof.`} If you already received it, you can confirm now.</small>`;
-              actions.push(`<button class="button outline small" type="button" data-mark-paid="${escapeHTML(request.id)}">Mark as paid</button>`);
+              const noDetails = !paymentDetails[account.id];
+              paymentNote = `<small class="payment-note">${proofRejected
+                ? "You said you did not receive the payment. Waiting for the learner to check and send proof again."
+                : request.paymentLater
+                  ? `You chose to collect payment later${price ? ` (${price})` : ""}, for example after the lesson or in person. When you receive it, press “Record payment” and add the transaction number.`
+                  : `Waiting for ${escapeHTML(request.learnerName)} to pay you${price ? ` ${price}` : ""}.${noDetails ? " You have not added payment details yet. Add them in your profile, or choose “Collect later”." : ""} When you receive it, press “Record payment”.`}</small>`;
+              actions.push(`<button class="button outline small" type="button" data-mark-paid="${escapeHTML(request.id)}" data-learner="${escapeHTML(request.learnerName)}" data-price="${price}">Record payment</button>`);
+              if (!request.paymentLater && !proofRejected) actions.push(`<button class="button outline small" type="button" data-payment-later="${escapeHTML(request.id)}" data-later="true">Collect later</button>`);
+              if (request.paymentLater) actions.push(`<button class="inline-link small-link" type="button" data-payment-later="${escapeHTML(request.id)}" data-later="false">Undo collect later</button>`);
             }
           } else {
             const details = paymentDetails[request.teacherId];
             if (proofSent) {
               paymentNote = `<small class="payment-note">You sent payment proof: ${proofSummary}\nWaiting for ${escapeHTML(request.teacherName)} to confirm.</small>${receiptButton}`;
             } else {
-              paymentNote = `${proofRejected ? `<small class="payment-note"><strong>${escapeHTML(request.teacherName)} could not find your payment.</strong>${request.paymentRejectNote ? `\n“${escapeHTML(request.paymentRejectNote)}”` : ""}\nPlease check and send your proof again.</small>` : ""}${details
+              paymentNote = request.paymentLater && !proofRejected
+                ? `<small class="payment-note"><strong>${escapeHTML(request.teacherName)} will collect payment later${price ? ` (${price})` : ""}.</strong>\nFor example after the lesson or in person. After you pay, press “I've paid” and add the transaction number.</small>`
+                : `${proofRejected ? `<small class="payment-note"><strong>${escapeHTML(request.teacherName)} could not find your payment.</strong>${request.paymentRejectNote ? `\n“${escapeHTML(request.paymentRejectNote)}”` : ""}\nPlease check and send your proof again.</small>` : ""}${details
                 ? `<small class="payment-note"><strong>Pay your tutor${price ? ` ${price}` : ""}:</strong>\n${escapeHTML(details)}\nAfter paying, press “I've paid” and add your transaction number.</small>`
-                : '<small class="payment-note">Your tutor has not added payment details yet. Contact them by email to arrange payment, then press “I\'ve paid”.</small>'}`;
+                : '<small class="payment-note">Your tutor has not added payment details yet. You can pay later: ask your tutor by email how to pay (for example Telebirr or in person). After paying, press “I\'ve paid”.</small>'}`;
               actions.push(`<button class="button small" type="button" data-submit-payment="${escapeHTML(request.id)}" data-tutor-name="${escapeHTML(request.teacherName)}" data-price="${price}">I've paid</button>`);
             }
           }
@@ -928,7 +952,7 @@
         return;
       }
       if (dashboardTab === "help") {
-        content.innerHTML = `<section class="dashboard-panel how-it-works">${howItWorksCard(account.role)}</section>`;
+        content.innerHTML = `<section class="dashboard-panel how-it-works">${howItWorksCard(account.role, true)}</section>`;
         return;
       }
       if (dashboardTab === "admin" && account.isAdmin) {
@@ -1044,12 +1068,13 @@
       return new Date(value).toLocaleString(undefined, { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
     }
 
-    function howItWorksCard(role) {
+    // signedIn: the dashboard version adds payment-detail tips that are only for members.
+    function howItWorksCard(role, signedIn = false) {
       if (role === "teacher") {
         return `<div class="how-card"><h3><span aria-hidden="true">🤟</span> For signers and teachers</h3><ol>
           <li><strong>Join</strong> as a Deaf signer / teacher and choose your country.</li>
           <li>Press <strong>+ Add a lesson</strong>. Give it a title, one sentence about what you teach, and a short video, or paste a YouTube link.</li>
-          <li>Choose <strong>free</strong> or <strong>paid</strong>. For paid lessons, add your Telebirr, CBE Birr, or bank details in your profile.</li>
+          <li>Choose <strong>free</strong> or <strong>paid</strong>.${signedIn ? " For paid lessons, add how learners can pay you in your profile, or choose “Collect later”." : ""}</li>
           <li>Open <strong>Requests</strong> to accept learners. At lesson time press <strong>🎥 Start video lesson</strong>. After a learner pays you, press <strong>Mark as paid</strong>.</li>
         </ol></div>`;
       }
@@ -1629,16 +1654,28 @@
       }
       const markPaid = event.target.closest("[data-mark-paid]");
       if (markPaid) {
-        if (!account || account.role !== "teacher" || !window.confirm("Confirm you have received this payment? Check your Telebirr, CBE Birr, or bank account first. The learner will get access to the lesson video.")) return;
-        markPaid.disabled = true;
-        const { error } = await db.rpc("confirm_payment", { p_request_id: markPaid.dataset.markPaid });
+        if (!account || account.role !== "teacher") return;
+        const form = document.getElementById("recordPaymentForm");
+        form.reset();
+        form.elements.requestId.value = markPaid.dataset.markPaid;
+        form.elements.method.value = markPaid.dataset.method || "";
+        form.elements.reference.value = markPaid.dataset.reference || "";
+        document.getElementById("recordPaymentIntro").textContent = `Save the payment you received from ${markPaid.dataset.learner || "the learner"}${markPaid.dataset.price ? ` (${markPaid.dataset.price})` : ""}. Check your Telebirr, CBE Birr, or bank account first.`;
+        openDialog("recordPaymentBackdrop");
+        return;
+      }
+      const laterButton = event.target.closest("[data-payment-later]");
+      if (laterButton) {
+        laterButton.disabled = true;
+        const later = laterButton.dataset.later === "true";
+        const { error } = await db.rpc("set_payment_later", { p_request_id: laterButton.dataset.paymentLater, p_later: later });
         if (error) {
-          markPaid.disabled = false;
+          laterButton.disabled = false;
           showToast(error.message);
           return;
         }
         await loadAccountData();
-        showToast("Payment confirmed. The learner can now watch the lesson video.");
+        showToast(later ? "The learner will see that you collect payment later." : "Collect later removed.");
         return;
       }
       const tab = event.target.closest("[data-dashboard-tab]");
@@ -1724,6 +1761,27 @@
       document.getElementById("reviewsSummary").textContent = summary ? `★ ${summary.average.toFixed(1)} from ${summary.count} reviews · ${summary.recommendCount} recommend` : "No reviews yet.";
       document.getElementById("reviewsList").innerHTML = reviewListHTML(reviews.filter(review => review.revieweeId === userId), account?.id === userId);
       openDialog("reviewsBackdrop");
+    });
+    document.getElementById("recordPaymentForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      if (!requireDatabase() || !account) return;
+      const form = event.currentTarget;
+      const values = new FormData(form);
+      const method = String(values.get("method") || "");
+      if (!PAYMENT_METHODS[method]) {
+        showToast("Choose how you were paid.");
+        return;
+      }
+      setBusy(form, true);
+      const { error } = await db.rpc("record_payment", { p_request_id: String(values.get("requestId")), p_method: method, p_reference: String(values.get("reference")).trim() });
+      setBusy(form, false);
+      if (error) {
+        showToast(error.message);
+        return;
+      }
+      closeDialog("recordPaymentBackdrop");
+      await loadAccountData();
+      showToast("Payment saved. The learner can now watch the lesson video.");
     });
     document.getElementById("receiptInput").addEventListener("change", event => {
       const file = event.target.files[0];
