@@ -234,6 +234,7 @@
     .agreement-option strong { font-size: 13.5px; }
     .agreement-option span span { font-size: 12.5px; }
     .agreement-link { justify-self: start; margin-left: 32px; color: var(--muted); font-size: 13px; }
+    .inline-link.receipt-link { display: block; margin-top: 6px; font-size: 12px; }
     .inline-link.report-link { display: block; margin-top: 8px; color: var(--muted); font-size: 11.5px; font-weight: 600; }
     .inline-link.report-link:hover { color: var(--red); }
     footer .inline-link { color: var(--green); font-size: inherit; font-weight: 600; text-decoration: none; }
@@ -533,6 +534,20 @@
     </section>
   </div>
 
+  <div class="backdrop" id="paymentProofBackdrop" hidden>
+    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="paymentProofTitle">
+      <div class="dialog-head"><div><p class="section-kicker">PAYMENT PROOF</p><h2 id="paymentProofTitle">I've paid my tutor</h2><p id="paymentProofIntro"></p></div><button class="icon-close" type="button" data-close="paymentProofBackdrop" aria-label="Close">×</button></div>
+      <form id="paymentProofForm">
+        <input type="hidden" name="requestId">
+        <div class="field"><label for="paymentMethod">How did you pay?</label><select id="paymentMethod" name="method" required><option value="" selected disabled>Choose</option><option value="telebirr">Telebirr</option><option value="cbe_birr">CBE Birr</option><option value="mpesa">M-Pesa</option><option value="bank">Bank transfer</option><option value="cash">Cash (in person)</option><option value="other">Other</option></select></div>
+        <div class="field"><label for="paymentReference">Transaction number</label><input id="paymentReference" name="reference" maxlength="100" placeholder="e.g. the number in your Telebirr or bank SMS"><small>You find it in the SMS or receipt you got after paying.</small></div>
+        <div class="field"><label class="drop-zone" for="receiptInput"><span><strong id="receiptLabel">Add a screenshot of your receipt (optional)</strong><span>JPG, PNG, or WebP · only you and your tutor can see it</span></span><input id="receiptInput" name="receipt" type="file" accept="image/jpeg,image/png,image/webp"></label></div>
+        <p class="form-notice">My Sign does not handle this money. Only send proof after you have really paid. False payment claims break the community rules.</p>
+        <div class="dialog-actions"><button class="button outline" type="button" data-close="paymentProofBackdrop">Cancel</button><button class="button" type="submit">Send payment proof</button></div>
+      </form>
+    </section>
+  </div>
+
   <div class="backdrop" id="reviewBackdrop" hidden>
     <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="reviewTitle">
       <div class="dialog-head"><div><p class="section-kicker">RATE &amp; REVIEW</p><h2 id="reviewTitle">Rate this lesson</h2><p>Your review is public to everyone on My Sign in your country.</p></div><button class="icon-close" type="button" data-close="reviewBackdrop" aria-label="Close">×</button></div>
@@ -621,6 +636,8 @@
     const VIDEO_HOST = "meet.ffmuc.net";
     const CONTACT_EMAIL = "support@accessedsolution.com";
     const REPORT_REASONS = { review_removal: "Review removal request", harassment: "Harassment or abuse", inappropriate: "Inappropriate content", fraud: "Scam or fraud", fake: "Fake profile", irrelevant: "Not a real sign language lesson", other: "Something else" };
+    const PAYMENT_METHODS = { telebirr: "Telebirr", cbe_birr: "CBE Birr", mpesa: "M-Pesa", bank: "Bank transfer", cash: "Cash (in person)", other: "Other" };
+    const PROOF_BUCKET = "payment-proofs";
     const LESSON_REPORT_REASONS = ["irrelevant", "inappropriate", "fraud", "other"];
     const PERSON_REPORT_REASONS = ["harassment", "inappropriate", "fraud", "fake", "other"];
     const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
@@ -663,7 +680,7 @@
     }
 
     function toRequest(row) {
-      return { id: row.id, lessonId: row.lesson_id, lessonTitle: row.lesson_title, learnerId: row.learner_id, learnerName: row.learner_name, learnerEmail: row.learner_email, teacherId: row.teacher_id, teacherName: row.teacher_name, teacherEmail: row.teacher_email, format: row.format, location: row.location, preferredTime: row.preferred_time, message: row.message, status: row.status, paidAt: row.paid_at, proposedBy: row.proposed_by, proposedTime: row.proposed_time, proposedMessage: row.proposed_message, proposalStatus: row.proposal_status };
+      return { id: row.id, lessonId: row.lesson_id, lessonTitle: row.lesson_title, learnerId: row.learner_id, learnerName: row.learner_name, learnerEmail: row.learner_email, teacherId: row.teacher_id, teacherName: row.teacher_name, teacherEmail: row.teacher_email, format: row.format, location: row.location, preferredTime: row.preferred_time, message: row.message, status: row.status, paidAt: row.paid_at, proposedBy: row.proposed_by, proposedTime: row.proposed_time, proposedMessage: row.proposed_message, proposalStatus: row.proposal_status, paymentMethod: row.payment_method, paymentReference: row.payment_reference, paymentProofPath: row.payment_proof_path, paymentSubmittedAt: row.payment_submitted_at, paymentRejectedAt: row.payment_rejected_at, paymentRejectNote: row.payment_reject_note };
     }
 
     async function loadAccountData() {
@@ -722,14 +739,21 @@
     }
 
     // Square-crop and shrink a photo before upload so pictures stay small and quick to load.
-    function resizeImage(file, size = 400) {
+    function resizeImage(file, size = 400, square = true) {
       return new Promise((resolve, reject) => {
         const image = new Image();
         image.onload = () => {
-          const side = Math.min(image.width, image.height);
           const canvas = document.createElement("canvas");
-          canvas.width = canvas.height = size;
-          canvas.getContext("2d").drawImage(image, (image.width - side) / 2, (image.height - side) / 2, side, side, 0, 0, size, size);
+          if (square) {
+            const side = Math.min(image.width, image.height);
+            canvas.width = canvas.height = size;
+            canvas.getContext("2d").drawImage(image, (image.width - side) / 2, (image.height - side) / 2, side, side, 0, 0, size, size);
+          } else {
+            const scale = Math.min(1, size / Math.max(image.width, image.height));
+            canvas.width = Math.round(image.width * scale);
+            canvas.height = Math.round(image.height * scale);
+            canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+          }
           URL.revokeObjectURL(image.src);
           canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("Could not read this picture.")), "image/jpeg", 0.85);
         };
@@ -827,14 +851,33 @@
         if (paidLesson && request.paidAt) {
           actions.push('<span class="request-status accepted">✓ Paid</span>');
           paymentNote = `<small class="payment-note done">${teacherView ? "You confirmed this payment." : "Your tutor confirmed your payment. The lesson video is unlocked."}</small>`;
-        } else if (paidLesson && teacherView) {
-          actions.push(`<button class="button outline small" type="button" data-mark-paid="${escapeHTML(request.id)}">Mark as paid</button>`);
-          paymentNote = `<small class="payment-note">The learner pays you directly${lesson.price ? ` (${escapeHTML(formatPrice(lesson))})` : ""}. Click “Mark as paid” once you receive it.</small>`;
         } else if (paidLesson) {
-          const details = paymentDetails[request.teacherId];
-          paymentNote = details
-            ? `<small class="payment-note"><strong>Pay your tutor${lesson.price ? ` ${escapeHTML(formatPrice(lesson))}` : ""}:</strong>\n${escapeHTML(details)}\nYour tutor will confirm once they receive it.</small>`
-            : '<small class="payment-note">Your tutor has not added payment details yet. Contact them by email to arrange payment.</small>';
+          const price = lesson.price ? escapeHTML(formatPrice(lesson)) : "";
+          const proofSent = request.paymentSubmittedAt && !(request.paymentRejectedAt && new Date(request.paymentRejectedAt) > new Date(request.paymentSubmittedAt));
+          const proofRejected = request.paymentRejectedAt && request.paymentSubmittedAt && new Date(request.paymentRejectedAt) > new Date(request.paymentSubmittedAt);
+          const proofSummary = request.paymentSubmittedAt
+            ? `${escapeHTML(PAYMENT_METHODS[request.paymentMethod] || "Payment")}${request.paymentReference ? ` · Transaction: ${escapeHTML(request.paymentReference)}` : ""} · ${escapeHTML(formatDateTime(request.paymentSubmittedAt))}`
+            : "";
+          const receiptButton = request.paymentProofPath ? `<button class="inline-link receipt-link" type="button" data-view-receipt="${escapeHTML(request.paymentProofPath)}">View receipt</button>` : "";
+          if (teacherView) {
+            if (proofSent) {
+              paymentNote = `<small class="payment-note"><strong>${escapeHTML(request.learnerName)} says they paid${price ? ` ${price}` : ""}:</strong>\n${proofSummary}\nCheck your Telebirr, CBE Birr, or bank account, then confirm.</small>${receiptButton}`;
+              actions.push(`<button class="button small" type="button" data-mark-paid="${escapeHTML(request.id)}">Confirm payment received</button><button class="button outline small" type="button" data-reject-payment="${escapeHTML(request.id)}">I didn't receive it</button>`);
+            } else {
+              paymentNote = `<small class="payment-note">${proofRejected ? "You said you did not receive the payment. Waiting for the learner to check and send proof again." : `Waiting for ${escapeHTML(request.learnerName)} to pay you${price ? ` ${price}` : ""} and send proof.`} If you already received it, you can confirm now.</small>`;
+              actions.push(`<button class="button outline small" type="button" data-mark-paid="${escapeHTML(request.id)}">Mark as paid</button>`);
+            }
+          } else {
+            const details = paymentDetails[request.teacherId];
+            if (proofSent) {
+              paymentNote = `<small class="payment-note">You sent payment proof: ${proofSummary}\nWaiting for ${escapeHTML(request.teacherName)} to confirm.</small>${receiptButton}`;
+            } else {
+              paymentNote = `${proofRejected ? `<small class="payment-note"><strong>${escapeHTML(request.teacherName)} could not find your payment.</strong>${request.paymentRejectNote ? `\n“${escapeHTML(request.paymentRejectNote)}”` : ""}\nPlease check and send your proof again.</small>` : ""}${details
+                ? `<small class="payment-note"><strong>Pay your tutor${price ? ` ${price}` : ""}:</strong>\n${escapeHTML(details)}\nAfter paying, press “I've paid” and add your transaction number.</small>`
+                : '<small class="payment-note">Your tutor has not added payment details yet. Contact them by email to arrange payment, then press “I\'ve paid”.</small>'}`;
+              actions.push(`<button class="button small" type="button" data-submit-payment="${escapeHTML(request.id)}" data-tutor-name="${escapeHTML(request.teacherName)}" data-price="${price}">I've paid</button>`);
+            }
+          }
         }
         if (waitingForMe) {
           actions.push(`<button class="button small" type="button" data-new-time-action="accept" data-request-id="${escapeHTML(request.id)}">Accept time</button><button class="button outline small" type="button" data-propose-time="${escapeHTML(request.id)}" data-other-name="${escapeHTML(otherName)}">Suggest another time</button><button class="button outline small" type="button" data-new-time-action="decline" data-request-id="${escapeHTML(request.id)}">Decline</button>`);
@@ -1473,6 +1516,44 @@
         showToast("Profile picture removed.");
         return;
       }
+      const submitPayment = event.target.closest("[data-submit-payment]");
+      if (submitPayment) {
+        const form = document.getElementById("paymentProofForm");
+        form.reset();
+        form.elements.requestId.value = submitPayment.dataset.submitPayment;
+        document.getElementById("receiptLabel").textContent = "Add a screenshot of your receipt (optional)";
+        document.getElementById("paymentProofIntro").textContent = `Tell ${submitPayment.dataset.tutorName} how you paid${submitPayment.dataset.price ? ` ${submitPayment.dataset.price}` : ""}. They will check and confirm.`;
+        openDialog("paymentProofBackdrop");
+        return;
+      }
+      const rejectPayment = event.target.closest("[data-reject-payment]");
+      if (rejectPayment) {
+        const note = window.prompt("Tell the learner what is wrong (for example: no payment with this transaction number):", "");
+        if (note === null) return;
+        rejectPayment.disabled = true;
+        const { error } = await db.rpc("reject_payment_proof", { p_request_id: rejectPayment.dataset.rejectPayment, p_note: note });
+        if (error) {
+          rejectPayment.disabled = false;
+          showToast(error.message);
+          return;
+        }
+        await loadAccountData();
+        showToast("The learner will see your note and can send proof again.");
+        return;
+      }
+      const viewReceipt = event.target.closest("[data-view-receipt]");
+      if (viewReceipt) {
+        const receiptWindow = window.open("", "_blank");
+        const { data: signed, error } = await db.storage.from(PROOF_BUCKET).createSignedUrl(viewReceipt.dataset.viewReceipt, 60 * 10);
+        if (error || !signed) {
+          receiptWindow?.close();
+          showToast("Could not open the receipt.");
+          return;
+        }
+        if (receiptWindow) receiptWindow.location = signed.signedUrl;
+        else window.location.href = signed.signedUrl;
+        return;
+      }
       const reviewRequest = event.target.closest("[data-review-request]");
       if (reviewRequest) {
         const form = document.getElementById("reviewForm");
@@ -1548,7 +1629,7 @@
       }
       const markPaid = event.target.closest("[data-mark-paid]");
       if (markPaid) {
-        if (!account || account.role !== "teacher" || !window.confirm("Confirm you have received this payment? The learner will get access to the lesson video.")) return;
+        if (!account || account.role !== "teacher" || !window.confirm("Confirm you have received this payment? Check your Telebirr, CBE Birr, or bank account first. The learner will get access to the lesson video.")) return;
         markPaid.disabled = true;
         const { error } = await db.rpc("confirm_payment", { p_request_id: markPaid.dataset.markPaid });
         if (error) {
@@ -1644,6 +1725,55 @@
       document.getElementById("reviewsList").innerHTML = reviewListHTML(reviews.filter(review => review.revieweeId === userId), account?.id === userId);
       openDialog("reviewsBackdrop");
     });
+    document.getElementById("receiptInput").addEventListener("change", event => {
+      const file = event.target.files[0];
+      document.getElementById("receiptLabel").textContent = file ? `${file.name} · ${(file.size / 1024 / 1024).toFixed(1)} MB` : "Add a screenshot of your receipt (optional)";
+    });
+    document.getElementById("paymentProofForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      if (!requireDatabase() || !account) return;
+      const form = event.currentTarget;
+      const values = new FormData(form);
+      const method = String(values.get("method") || "");
+      const reference = String(values.get("reference")).trim();
+      const receipt = values.get("receipt");
+      const hasReceipt = receipt instanceof File && receipt.size > 0;
+      if (!PAYMENT_METHODS[method]) {
+        showToast("Choose how you paid.");
+        return;
+      }
+      if (method !== "cash" && !reference && !hasReceipt) {
+        showToast("Add the transaction number or a screenshot of your receipt.");
+        return;
+      }
+      if (hasReceipt && !["image/jpeg", "image/png", "image/webp"].includes(receipt.type)) {
+        showToast("The receipt must be a picture (JPG, PNG, or WebP).");
+        return;
+      }
+      setBusy(form, true);
+      let proofPath = null;
+      try {
+        if (hasReceipt) {
+          const picture = await resizeImage(receipt, 1200, false);
+          proofPath = `${account.id}/receipt-${Date.now()}.jpg`;
+          const upload = await db.storage.from(PROOF_BUCKET).upload(proofPath, picture, { contentType: "image/jpeg" });
+          if (upload.error) throw upload.error;
+        }
+        const { error } = await db.rpc("submit_payment_proof", { p_request_id: String(values.get("requestId")), p_method: method, p_reference: reference, p_proof_path: proofPath });
+        if (error) {
+          if (proofPath) await db.storage.from(PROOF_BUCKET).remove([proofPath]);
+          throw error;
+        }
+      } catch (error) {
+        setBusy(form, false);
+        showToast(error.message || "Could not send your payment proof.");
+        return;
+      }
+      setBusy(form, false);
+      closeDialog("paymentProofBackdrop");
+      await loadAccountData();
+      showToast("Payment proof sent. Your tutor will check and confirm.");
+    });
     document.getElementById("reviewForm").addEventListener("submit", async event => {
       event.preventDefault();
       if (!requireDatabase() || !account) return;
@@ -1721,6 +1851,8 @@
       const videoPaths = lessons.filter(lesson => lesson.ownerId === account.id).map(lesson => lesson.videoPath).filter(Boolean);
       if (videoPaths.length) await db.storage.from(VIDEO_BUCKET).remove(videoPaths);
       if (account.avatarPath) await db.storage.from(AVATAR_BUCKET).remove([account.avatarPath]);
+      const receiptPaths = requests.filter(request => request.learnerId === account.id && request.paymentProofPath).map(request => request.paymentProofPath);
+      if (receiptPaths.length) await db.storage.from(PROOF_BUCKET).remove(receiptPaths);
       const { error } = await db.rpc("delete_my_account");
       setBusy(form, false);
       if (error) {
