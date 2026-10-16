@@ -107,6 +107,24 @@
     .card-save[aria-pressed="true"] { border-color: var(--green); background: var(--green-soft); }
     .empty-state { grid-column: 1 / -1; padding: 42px 16px; border: 1px dashed #d3dcd1; border-radius: 7px; color: var(--muted); text-align: center; font-size: 12px; }
 
+    .rating-badge { display: inline-flex; align-items: center; gap: 4px; width: fit-content; padding: 0; border: 0; background: transparent; color: #a77b12; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+    .rating-badge span { color: var(--muted); font-weight: 500; }
+    .rating-badge:hover span { text-decoration: underline; }
+    .rating-badge.empty { color: var(--muted); font-weight: 500; cursor: default; }
+    .lesson-rating { margin: 0 0 12px; font-size: 13px; }
+    .recommend-rating { color: #a77b12 !important; font-weight: 700; }
+    .review-item { padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .review-item:last-child { border-bottom: 0; }
+    .review-head { display: flex; align-items: center; gap: 10px; }
+    .review-stars { color: #d9a514; font-size: 17px; letter-spacing: 1px; }
+    .review-item p { margin: 8px 0 6px; color: var(--ink); font-size: 14px; line-height: 1.55; white-space: pre-line; }
+    .review-item small { color: var(--muted); font-size: 12px; }
+    .star-rating { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 6px; }
+    .star-rating input { position: absolute; opacity: 0; pointer-events: none; }
+    .field .star-rating label { color: #d5dcd6; font-size: 40px; font-weight: 400; line-height: 1; cursor: pointer; transition: color 120ms ease, transform 120ms ease; }
+    .field .star-rating label:hover, .field .star-rating label:hover ~ label, .field .star-rating input:checked ~ label { color: #e2b03a; }
+    .field .star-rating label:hover { transform: scale(1.1); }
+    .star-rating input:focus-visible + label { outline: 2px solid var(--green); outline-offset: 2px; border-radius: 4px; }
     .recommend-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
     .recommend-card { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
     .recommend-text { display: grid; flex: 1; min-width: 0; gap: 2px; }
@@ -506,10 +524,54 @@
       <form id="reportForm">
         <input type="hidden" name="reportedId">
         <input type="hidden" name="lessonId">
+        <input type="hidden" name="reviewId">
         <div class="field"><label for="reportReason">What happened?</label><select id="reportReason" name="reason" required></select></div>
         <div class="field"><label for="reportDetails">Details</label><textarea id="reportDetails" name="details" maxlength="1000" placeholder="Tell us what happened, and when"></textarea></div>
         <p class="form-notice">The person you report will not be told who reported them. If someone is in immediate danger, contact local emergency services.</p>
         <div class="dialog-actions"><button class="button outline" type="button" data-close="reportBackdrop">Cancel</button><button class="button" type="submit">Send report</button></div>
+      </form>
+    </section>
+  </div>
+
+  <div class="backdrop" id="reviewBackdrop" hidden>
+    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="reviewTitle">
+      <div class="dialog-head"><div><p class="section-kicker">RATE &amp; REVIEW</p><h2 id="reviewTitle">Rate this lesson</h2><p>Your review is public to everyone on My Sign in your country.</p></div><button class="icon-close" type="button" data-close="reviewBackdrop" aria-label="Close">×</button></div>
+      <form id="reviewForm">
+        <input type="hidden" name="requestId"><input type="hidden" name="revieweeId"><input type="hidden" name="reviewId">
+        <fieldset class="field" style="padding:0;border:0"><legend style="margin-bottom:7px;padding:0">Your rating</legend>
+          <div class="star-rating">
+            <input type="radio" id="star5" name="rating" value="5"><label for="star5" title="5 stars">★</label>
+            <input type="radio" id="star4" name="rating" value="4"><label for="star4" title="4 stars">★</label>
+            <input type="radio" id="star3" name="rating" value="3"><label for="star3" title="3 stars">★</label>
+            <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="2 stars">★</label>
+            <input type="radio" id="star1" name="rating" value="1"><label for="star1" title="1 star">★</label>
+          </div>
+        </fieldset>
+        <div class="field"><label>Would you recommend them?</label><div class="price-options">
+          <label class="price-option"><input type="radio" name="recommend" value="yes"><span><strong>👍 Yes</strong><span>I recommend them.</span></span></label>
+          <label class="price-option"><input type="radio" name="recommend" value="no"><span><strong>No</strong><span>I would not recommend them.</span></span></label>
+        </div></div>
+        <div class="field"><label for="reviewFeedback">Feedback</label><textarea id="reviewFeedback" name="feedback" maxlength="1000" placeholder="What went well? What could be better? Be kind and honest."></textarea></div>
+        <div class="dialog-actions"><button class="inline-link" type="button" id="deleteReviewButton" style="margin-right:auto" hidden>Delete review</button><button class="button outline" type="button" data-close="reviewBackdrop">Cancel</button><button class="button" type="submit">Save review</button></div>
+      </form>
+    </section>
+  </div>
+
+  <div class="backdrop" id="reviewsBackdrop" hidden>
+    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="reviewsTitle">
+      <div class="dialog-head"><div><p class="section-kicker">REVIEWS</p><h2 id="reviewsTitle">Reviews</h2><p id="reviewsSummary"></p></div><button class="icon-close" type="button" data-close="reviewsBackdrop" aria-label="Close">×</button></div>
+      <div id="reviewsList"></div>
+    </section>
+  </div>
+
+  <div class="backdrop" id="proposeTimeBackdrop" hidden>
+    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="proposeTimeTitle">
+      <div class="dialog-head"><div><p class="section-kicker">NEW TIME</p><h2 id="proposeTimeTitle">Suggest a new time</h2><p id="proposeTimeTutor"></p></div><button class="icon-close" type="button" data-close="proposeTimeBackdrop" aria-label="Close">×</button></div>
+      <form id="proposeTimeForm">
+        <input type="hidden" name="requestId">
+        <div class="field"><label for="proposedTime">New date and time (24-hour)</label><input id="proposedTime" name="proposedTime" type="datetime-local" required></div>
+        <div class="field"><label for="proposedMessage">Message (optional)</label><textarea id="proposedMessage" name="message" maxlength="500" placeholder="e.g. Does this time work for you?"></textarea></div>
+        <div class="dialog-actions"><button class="button outline" type="button" data-close="proposeTimeBackdrop">Cancel</button><button class="button" type="submit">Send new time</button></div>
       </form>
     </section>
   </div>
@@ -558,7 +620,7 @@
     // Public Jitsi server that lets anyone start a room without signing in (meet.jit.si requires a moderator login).
     const VIDEO_HOST = "meet.ffmuc.net";
     const CONTACT_EMAIL = "support@accessedsolution.com";
-    const REPORT_REASONS = { harassment: "Harassment or abuse", inappropriate: "Inappropriate content", fraud: "Scam or fraud", fake: "Fake profile", irrelevant: "Not a real sign language lesson", other: "Something else" };
+    const REPORT_REASONS = { review_removal: "Review removal request", harassment: "Harassment or abuse", inappropriate: "Inappropriate content", fraud: "Scam or fraud", fake: "Fake profile", irrelevant: "Not a real sign language lesson", other: "Something else" };
     const LESSON_REPORT_REASONS = ["irrelevant", "inappropriate", "fraud", "other"];
     const PERSON_REPORT_REASONS = ["harassment", "inappropriate", "fraud", "fake", "other"];
     const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
@@ -583,6 +645,7 @@
     let savedTutors = [];
     let paymentDetails = {};
     let avatarUrls = {};
+    let reviews = [];
     let category = "All";
     let activeLessonId = null;
     let toastTimeout;
@@ -600,7 +663,7 @@
     }
 
     function toRequest(row) {
-      return { id: row.id, lessonId: row.lesson_id, lessonTitle: row.lesson_title, learnerId: row.learner_id, learnerName: row.learner_name, learnerEmail: row.learner_email, teacherId: row.teacher_id, teacherName: row.teacher_name, teacherEmail: row.teacher_email, format: row.format, location: row.location, preferredTime: row.preferred_time, message: row.message, status: row.status, paidAt: row.paid_at };
+      return { id: row.id, lessonId: row.lesson_id, lessonTitle: row.lesson_title, learnerId: row.learner_id, learnerName: row.learner_name, learnerEmail: row.learner_email, teacherId: row.teacher_id, teacherName: row.teacher_name, teacherEmail: row.teacher_email, format: row.format, location: row.location, preferredTime: row.preferred_time, message: row.message, status: row.status, paidAt: row.paid_at, proposedBy: row.proposed_by, proposedTime: row.proposed_time, proposedMessage: row.proposed_message, proposalStatus: row.proposal_status };
     }
 
     async function loadAccountData() {
@@ -612,6 +675,7 @@
         savedTutors = [];
         paymentDetails = {};
         avatarUrls = {};
+        reviews = [];
         updateAccountHeader();
         renderLessons();
         return;
@@ -625,8 +689,9 @@
         db.from("saved_tutors").select("lesson_id"),
         db.from("teacher_payment_details").select("teacher_id, details"),
         db.from("admins").select("user_id").eq("user_id", userId).maybeSingle(),
+        db.from("reviews").select("*").order("created_at", { ascending: false }),
       ]);
-      const [profileResult, lessonResult, requestResult, memberResult, savedResult, paymentResult, adminResult] = results;
+      const [profileResult, lessonResult, requestResult, memberResult, savedResult, paymentResult, adminResult, reviewResult] = results;
       if (results.some(result => result.error)) showToast("Could not load everything. Please refresh the page.");
       const row = profileResult.data;
       account = row ? { id: row.id, email: session.user.email, name: row.name, role: row.role, country: row.country, avatarPath: row.avatar_path, suspended: Boolean(row.suspended_at), isAdmin: Boolean(adminResult.data), profile: { city: row.city, topics: row.topics, bio: row.bio } } : null;
@@ -636,6 +701,7 @@
       members = (memberResult.data || []).filter(member => member.id !== userId);
       savedTutors = (savedResult.data || []).map(item => item.lesson_id);
       paymentDetails = Object.fromEntries((paymentResult.data || []).map(item => [item.teacher_id, item.details]));
+      reviews = (reviewResult.data || []).map(item => ({ id: item.id, requestId: item.request_id, reviewerId: item.reviewer_id, revieweeId: item.reviewee_id, rating: item.rating, recommend: item.recommend, feedback: item.feedback, createdAt: item.created_at }));
       await loadAvatarUrls([...(row ? [{ id: row.id, avatar_path: row.avatar_path }] : []), ...members]);
       updateAccountHeader();
       renderLessons();
@@ -721,7 +787,7 @@
       if (!requests.length) return `<div class="dashboard-empty">${teacherView ? "Lesson requests from learners will appear here." : "Your lesson requests will appear here."}</div>`;
       return requests.map(request => {
         const formatLabel = request.format === "in-person" ? `In person${request.location ? ` · ${request.location}` : ""}` : "Virtual";
-        const timeLabel = request.preferredTime ? new Date(request.preferredTime).toLocaleString() : "Time not set";
+        const timeLabel = request.preferredTime ? formatDateTime(request.preferredTime) : "Time not set";
         const otherPerson = teacherView ? request.learnerName : request.teacherName;
         const contactEmail = teacherView ? request.learnerEmail : request.teacherEmail;
         const videoReady = request.status === "accepted" && request.format === "virtual";
@@ -729,6 +795,27 @@
         const paidLesson = request.status === "accepted" && lesson?.access === "paid";
         const actions = [];
         let paymentNote = "";
+        const timePassed = ["pending", "accepted"].includes(request.status) && request.preferredTime && new Date(request.preferredTime) < new Date();
+        const proposedLabel = request.proposedTime ? formatDateTime(request.proposedTime) : "";
+        const mySide = teacherView ? "teacher" : "learner";
+        const otherName = teacherView ? request.learnerName : request.teacherName;
+        const openRequest = ["pending", "accepted"].includes(request.status);
+        const waitingForMe = openRequest && request.proposalStatus === "pending" && request.proposedBy !== mySide;
+        const waitingForThem = openRequest && request.proposalStatus === "pending" && request.proposedBy === mySide;
+        let timeNote = "";
+        if (waitingForMe) {
+          timeNote = `<small class="payment-note"><strong>${escapeHTML(otherName)} suggested a new time: ${escapeHTML(proposedLabel)}</strong>${request.proposedMessage ? `\n${escapeHTML(request.proposedMessage)}` : ""}</small>`;
+        } else if (waitingForThem) {
+          timeNote = `<small class="payment-note">You suggested ${escapeHTML(proposedLabel)}. Waiting for ${escapeHTML(otherName)} to answer.</small>`;
+        } else if (openRequest && request.proposalStatus === "declined") {
+          timeNote = `<small class="payment-note">${request.proposedBy === mySide ? `${escapeHTML(otherName)} can't make ${escapeHTML(proposedLabel)}.` : `You declined ${escapeHTML(proposedLabel)}.`}${timePassed ? " The lesson time has passed, so please agree on a new time." : " The original time stays."}</small>`;
+        } else if (timePassed && request.status === "accepted") {
+          timeNote = `<small class="payment-note">This lesson time has passed. How did it go? Rate ${escapeHTML(otherName)}, or suggest a new time if you missed the lesson.</small>`;
+        } else if (timePassed) {
+          timeNote = `<small class="payment-note">${teacherView ? "This lesson time has passed. Suggest a new time, or wait for the learner to suggest one." : "This lesson time has passed. Suggest a new time to meet your tutor."}</small>`;
+        }
+        const myReview = account ? reviews.find(review => review.requestId === request.id && review.reviewerId === account.id) : null;
+        if (myReview && !waitingForMe && !waitingForThem) timeNote = `<small class="payment-note done">You rated ${escapeHTML(otherName)} ${stars(myReview.rating)}${myReview.recommend ? " and recommend them" : ""}.</small>`;
         if (request.status === "pending") {
           paymentNote = `<small class="payment-note">${teacherView ? "Accept to share both of your email addresses and open the video room. Until you accept, no contact details are shared." : `Waiting for ${escapeHTML(request.teacherName)} to accept. Contact details and the video room appear after they accept.`}</small>`;
         }
@@ -749,15 +836,23 @@
             ? `<small class="payment-note"><strong>Pay your tutor${lesson.price ? ` ${escapeHTML(formatPrice(lesson))}` : ""}:</strong>\n${escapeHTML(details)}\nYour tutor will confirm once they receive it.</small>`
             : '<small class="payment-note">Your tutor has not added payment details yet. Contact them by email to arrange payment.</small>';
         }
+        if (waitingForMe) {
+          actions.push(`<button class="button small" type="button" data-new-time-action="accept" data-request-id="${escapeHTML(request.id)}">Accept time</button><button class="button outline small" type="button" data-propose-time="${escapeHTML(request.id)}" data-other-name="${escapeHTML(otherName)}">Suggest another time</button><button class="button outline small" type="button" data-new-time-action="decline" data-request-id="${escapeHTML(request.id)}">Decline</button>`);
+        } else if (openRequest && !waitingForThem) {
+          actions.push(`<button class="button ${timePassed ? "" : "outline "}small" type="button" data-propose-time="${escapeHTML(request.id)}" data-other-name="${escapeHTML(otherName)}">Suggest new time</button>`);
+        }
+        if (request.status === "accepted" && timePassed) {
+          actions.push(`<button class="button ${myReview ? "outline " : ""}small" type="button" data-review-request="${escapeHTML(request.id)}" data-reviewee="${escapeHTML(teacherView ? request.learnerId : request.teacherId)}" data-other-name="${escapeHTML(otherName)}">${myReview ? "Edit review" : "★ Rate & review"}</button>`);
+        }
         if (videoReady) actions.push(`<a class="button small" href="${escapeHTML(videoRoomUrl(request))}" target="_blank" rel="noopener">🎥 Start video lesson</a>`);
         const controls = `<div class="dashboard-actions">${actions.join("")}</div>`;
-        return `<div class="dashboard-row"><div class="dashboard-avatar" aria-hidden="true">${avatarHTML(teacherView ? request.learnerId : request.teacherId, otherPerson)}</div><div style="min-width:0;flex:1"><strong>${escapeHTML(request.lessonTitle)}</strong><small>${escapeHTML(otherPerson || "Learner")} · ${escapeHTML(formatLabel)} · ${escapeHTML(timeLabel)}</small>${contactEmail ? `<small>Contact: ${escapeHTML(contactEmail)}</small>` : ""}${request.message ? `<small>${escapeHTML(request.message)}</small>` : ""}${videoReady ? "<small>Private video room for you and your " + (teacherView ? "learner" : "tutor") + ". Open it at the lesson time. Allow camera and microphone when asked.</small>" : ""}${paymentNote}<button class="inline-link report-link" type="button" data-report-user="${escapeHTML(teacherView ? request.learnerId : request.teacherId)}" data-report-name="${escapeHTML(otherPerson || "")}" data-report-lesson="${escapeHTML(request.lessonId || "")}">Report a problem</button></div>${controls}</div>`;
+        return `<div class="dashboard-row"><div class="dashboard-avatar" aria-hidden="true">${avatarHTML(teacherView ? request.learnerId : request.teacherId, otherPerson)}</div><div style="min-width:0;flex:1"><strong>${escapeHTML(request.lessonTitle)}</strong><small>${escapeHTML(otherPerson || "Learner")} · ${escapeHTML(formatLabel)} · ${escapeHTML(timeLabel)}</small>${contactEmail ? `<small>Contact: ${escapeHTML(contactEmail)}</small>` : ""}${request.message ? `<small>${escapeHTML(request.message)}</small>` : ""}${videoReady ? "<small>Private video room for you and your " + (teacherView ? "learner" : "tutor") + ". Open it at the lesson time. Allow camera and microphone when asked.</small>" : ""}${timeNote}${paymentNote}<button class="inline-link report-link" type="button" data-report-user="${escapeHTML(teacherView ? request.learnerId : request.teacherId)}" data-report-name="${escapeHTML(otherPerson || "")}" data-report-lesson="${escapeHTML(request.lessonId || "")}">Report a problem</button></div>${controls}</div>`;
       }).join("");
     }
 
     function dashboardMemberRows(list, emptyText) {
       if (!list.length) return `<div class="dashboard-empty">${emptyText}</div>`;
-      return list.map(member => `<div class="dashboard-row"><div class="dashboard-avatar" aria-hidden="true">${avatarHTML(member.id, member.name)}</div><div style="min-width:0;flex:1"><strong>${escapeHTML(member.name)}</strong><small>${member.role === "teacher" ? "Signer / teacher" : "Learner"}${member.city ? ` · ${escapeHTML(member.city)}` : ""}</small>${member.topics ? `<small>${escapeHTML(member.topics)}</small>` : ""}${member.bio ? `<small>${escapeHTML(member.bio)}</small>` : ""}</div>${account?.role === "learner" && member.role === "teacher" ? `<button class="button small" type="button" data-connect-tutor="${escapeHTML(member.id)}" data-connect-name="${escapeHTML(member.name)}">Connect</button>` : ""}</div>`).join("");
+      return list.map(member => `<div class="dashboard-row"><div class="dashboard-avatar" aria-hidden="true">${avatarHTML(member.id, member.name)}</div><div style="min-width:0;flex:1"><strong>${escapeHTML(member.name)}</strong>${ratingBadge(member.id, member.name)}<small>${member.role === "teacher" ? "Signer / teacher" : "Learner"}${member.city ? ` · ${escapeHTML(member.city)}` : ""}</small>${member.topics ? `<small>${escapeHTML(member.topics)}</small>` : ""}${member.bio ? `<small>${escapeHTML(member.bio)}</small>` : ""}</div>${account?.role === "learner" && member.role === "teacher" ? `<button class="button small" type="button" data-connect-tutor="${escapeHTML(member.id)}" data-connect-name="${escapeHTML(member.name)}">Connect</button>` : ""}</div>`).join("");
     }
 
     function renderDashboard() {
@@ -799,7 +894,7 @@
         return;
       }
       if (dashboardTab === "profile") {
-        content.innerHTML = `<section class="dashboard-panel"><h2>Profile picture</h2><div class="profile-photo-row"><div class="profile-photo" aria-hidden="true">${avatarHTML(account.id, account.name)}</div><div class="profile-photo-actions"><label class="button outline small" for="avatarInput">${account.avatarPath ? "Change picture" : "Upload picture"}</label><input id="avatarInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>${account.avatarPath ? '<button class="inline-link" type="button" data-remove-avatar>Remove picture</button>' : ""}<small>JPG, PNG, or WebP. Members in ${escapeHTML(country)} can see it. A clear photo of your face helps people trust you.</small></div></div></section>${dashboardProfileMarkup(account)}<section class="dashboard-panel"><h2>Change password</h2><form class="profile-form" id="changePasswordForm">
+        content.innerHTML = `<section class="dashboard-panel"><h2>Profile picture</h2><div class="profile-photo-row"><div class="profile-photo" aria-hidden="true">${avatarHTML(account.id, account.name)}</div><div class="profile-photo-actions"><label class="button outline small" for="avatarInput">${account.avatarPath ? "Change picture" : "Upload picture"}</label><input id="avatarInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>${account.avatarPath ? '<button class="inline-link" type="button" data-remove-avatar>Remove picture</button>' : ""}<small>JPG, PNG, or WebP. Members in ${escapeHTML(country)} can see it. A clear photo of your face helps people trust you.</small></div></div></section>${dashboardProfileMarkup(account)}<section class="dashboard-panel"><h2>What people say about you</h2>${ratingSummary(account.id) ? `<p class="section-intro">★ ${ratingSummary(account.id).average.toFixed(1)} from ${ratingSummary(account.id).count} reviews. Everyone on My Sign in ${escapeHTML(country)} can see these reviews. If a review is unfair or abusive, you can ask the admin to remove it.</p>` : '<p class="section-intro">After your lessons, the people you teach or learn with can rate you here. Everyone on My Sign in your country can see these reviews.</p>'}${reviewListHTML(reviews.filter(review => review.revieweeId === account.id), true)}</section><section class="dashboard-panel"><h2>Change password</h2><form class="profile-form" id="changePasswordForm">
           <div class="field"><label for="currentPassword">Current password</label><input id="currentPassword" name="currentPassword" type="password" required autocomplete="current-password"></div>
           <div class="field"><label for="changeNewPassword">New password</label><input id="changeNewPassword" name="newPassword" type="password" required minlength="8" maxlength="72" autocomplete="new-password"><small>At least 8 characters.</small></div>
           <div class="field"><label for="changeConfirmPassword">Repeat new password</label><input id="changeConfirmPassword" name="confirmPassword" type="password" required minlength="8" maxlength="72" autocomplete="new-password"></div>
@@ -860,7 +955,8 @@
           const topicMatches = new Set(tutorWords.filter(word => wanted.has(word))).size;
           const sameCity = myCity && (tutor.city || "").trim().toLocaleLowerCase() === myCity;
           const hasFree = tutorLessons.some(lesson => lesson.price === 0);
-          const score = topicMatches * 3 + (sameCity ? 2 : 0) + (tutorLessons.length ? 2 : 0) + (hasFree ? 1 : 0);
+          const summary = ratingSummary(tutor.id);
+          const score = topicMatches * 3 + (sameCity ? 2 : 0) + (tutorLessons.length ? 2 : 0) + (hasFree ? 1 : 0) + (summary ? summary.average + summary.recommendCount : 0);
           const why = topicMatches ? "Matches your interests" : sameCity ? `Near you in ${tutor.city}` : hasFree ? "Has free lessons" : tutorLessons.length ? "Has lessons ready" : "Tutor in your country";
           return { tutor, score, why };
         })
@@ -869,7 +965,40 @@
     }
 
     function recommendCards(items) {
-      return items.map(({ tutor, why }) => `<div class="recommend-card"><div class="dashboard-avatar" aria-hidden="true">${avatarHTML(tutor.id, tutor.name)}</div><div class="recommend-text"><strong>${escapeHTML(tutor.name)}</strong><small>${escapeHTML([tutor.city, tutor.topics].filter(Boolean).join(" · ") || "Sign language tutor")}</small><span class="recommend-why">${escapeHTML(why)}</span></div><button class="button small" type="button" data-connect-tutor="${escapeHTML(tutor.id)}" data-connect-name="${escapeHTML(tutor.name)}">Connect</button></div>`).join("");
+      return items.map(({ tutor, why }) => `<div class="recommend-card"><div class="dashboard-avatar" aria-hidden="true">${avatarHTML(tutor.id, tutor.name)}</div><div class="recommend-text"><strong>${escapeHTML(tutor.name)}</strong>${ratingSummary(tutor.id) ? `<small class="recommend-rating">★ ${ratingSummary(tutor.id).average.toFixed(1)} (${ratingSummary(tutor.id).count} reviews)</small>` : ""}<small>${escapeHTML([tutor.city, tutor.topics].filter(Boolean).join(" · ") || "Sign language tutor")}</small><span class="recommend-why">${escapeHTML(why)}</span></div><button class="button small" type="button" data-connect-tutor="${escapeHTML(tutor.id)}" data-connect-name="${escapeHTML(tutor.name)}">Connect</button></div>`).join("");
+    }
+
+    function ratingSummary(userId) {
+      const list = reviews.filter(review => review.revieweeId === userId);
+      if (!list.length) return null;
+      const average = list.reduce((sum, review) => sum + review.rating, 0) / list.length;
+      return { average, count: list.length, recommendCount: list.filter(review => review.recommend).length };
+    }
+
+    function stars(rating) {
+      return "★".repeat(Math.round(rating)) + "☆".repeat(5 - Math.round(rating));
+    }
+
+    function ratingBadge(userId, name) {
+      const summary = ratingSummary(userId);
+      if (!summary) return '<span class="rating-badge empty">No reviews yet</span>';
+      return `<button class="rating-badge" type="button" data-show-reviews="${escapeHTML(userId)}" data-name="${escapeHTML(name || "")}" aria-label="${summary.average.toFixed(1)} out of 5 from ${summary.count} reviews. See reviews">★ ${summary.average.toFixed(1)} <span>(${summary.count}) · ${Math.round(summary.recommendCount / summary.count * 100)}% recommend · See reviews</span></button>`;
+    }
+
+    function personName(userId) {
+      if (account && userId === account.id) return account.name;
+      return members.find(member => member.id === userId)?.name || "A member";
+    }
+
+    // aboutMe: the signed-in member is the one being reviewed, so they can ask the admin to remove a review.
+    function reviewListHTML(list, aboutMe = false) {
+      if (!list.length) return '<div class="dashboard-empty">No reviews yet.</div>';
+      return list.map(review => `<div class="review-item"><div class="review-head"><span class="review-stars" aria-label="${review.rating} out of 5">${stars(review.rating)}</span>${review.recommend ? '<span class="request-status accepted">Recommends</span>' : ""}</div>${review.feedback ? `<p>${escapeHTML(review.feedback)}</p>` : ""}<small>${escapeHTML(personName(review.reviewerId))} · ${escapeHTML(formatDateTime(review.createdAt))}</small>${aboutMe ? `<button class="inline-link report-link" type="button" data-report-user="${escapeHTML(review.reviewerId)}" data-report-name="${escapeHTML(personName(review.reviewerId))}" data-report-review="${escapeHTML(review.id)}" data-report-kind="review">Ask the admin to remove this review</button>` : ""}</div>`).join("");
+    }
+
+    // All dates and times on the site use the 24-hour clock, e.g. 22 Oct 2026, 14:30.
+    function formatDateTime(value) {
+      return new Date(value).toLocaleString(undefined, { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
     }
 
     function howItWorksCard(role) {
@@ -941,7 +1070,7 @@
           <div class="lesson-cover"><div class="lesson-cover-placeholder ${escapeHTML(lesson.coverPattern || ["pattern-sage", "pattern-clay", "pattern-blue"][index % 3])}" aria-hidden="true"><span class="cover-symbol">${escapeHTML(lesson.coverMark || (paid ? "↔" : "S"))}</span></div><span class="price-label${paid ? " paid" : ""}">${escapeHTML(priceText)}</span><span class="duration-label">${escapeHTML(lesson.duration || "Video lesson")}</span></div>
           <div class="lesson-content"><div class="lesson-topline"><p class="lesson-category">${escapeHTML(lesson.category)}</p>${lesson.example ? '<span class="example-label">Sample profile</span>' : ""}</div>
             <h3>${escapeHTML(lesson.title)}</h3><p class="lesson-description">${escapeHTML(lesson.description)}</p>
-            <div class="creator-row"><span class="creator-avatar" aria-hidden="true">${avatarHTML(lesson.ownerId, lesson.creator)}</span><span class="creator-name">${escapeHTML(lesson.creator)}<span class="creator-meta">${escapeHTML(formatSummary)}</span></span>
+            <div class="creator-row"><span class="creator-avatar" aria-hidden="true">${avatarHTML(lesson.ownerId, lesson.creator)}</span><span class="creator-name">${escapeHTML(lesson.creator)}<span class="creator-meta">${escapeHTML(formatSummary)}${ratingSummary(lesson.ownerId) ? ` · ★ ${ratingSummary(lesson.ownerId).average.toFixed(1)}` : ""}</span></span>
             <button class="card-save" type="button" data-save-tutor="${escapeHTML(lesson.id)}" aria-label="${savedByUser ? "Remove saved tutor" : "Save tutor"}" aria-pressed="${savedByUser}" title="${savedByUser ? "Remove saved tutor" : "Save tutor"}">${savedByUser ? "★" : "☆"}</button>
             <button class="card-open" type="button" data-open-lesson="${escapeHTML(lesson.id)}" aria-label="${isUnlocked(lesson) ? "View" : "Access"} ${escapeHTML(lesson.title)}">${isUnlocked(lesson) ? "↗" : "›"}</button></div>
           </div>
@@ -1011,7 +1140,7 @@
         access.innerHTML = '<p class="form-notice">This is your lesson. Learners can request it.</p>';
       } else {
         const priceNote = lesson.price > 0 ? ` Price: ${escapeHTML(formatPrice(lesson))}, paid directly to the tutor after they accept.` : "";
-        access.innerHTML = `<div class="dialog-actions" style="justify-content:start"><button class="button" type="button" id="requestBooking">Request a lesson</button></div><p class="form-notice">Requests are pending until the tutor accepts or declines.${priceNote}</p>${account ? `<button class="inline-link report-link" type="button" data-report-user="${escapeHTML(lesson.ownerId)}" data-report-name="${escapeHTML(lesson.creator)}" data-report-lesson="${escapeHTML(lesson.id)}" data-report-kind="lesson">Report this lesson</button>` : ""}`;
+        access.innerHTML = `<p class="lesson-rating">${escapeHTML(lesson.creator)}: ${ratingBadge(lesson.ownerId, lesson.creator)}</p><div class="dialog-actions" style="justify-content:start"><button class="button" type="button" id="requestBooking">Request a lesson</button></div><p class="form-notice">Requests are pending until the tutor accepts or declines.${priceNote}</p>${account ? `<button class="inline-link report-link" type="button" data-report-user="${escapeHTML(lesson.ownerId)}" data-report-name="${escapeHTML(lesson.creator)}" data-report-lesson="${escapeHTML(lesson.id)}" data-report-kind="lesson">Report this lesson</button>` : ""}`;
         document.getElementById("requestBooking").addEventListener("click", () => beginBooking(lesson));
       }
       openDialog("lessonBackdrop");
@@ -1231,6 +1360,12 @@
       document.getElementById("reportTitle").textContent = lessonReport ? "Report this lesson" : "Report a problem";
       document.getElementById("reportReason").innerHTML = '<option value="" selected disabled>Choose a reason</option>' + (lessonReport ? LESSON_REPORT_REASONS : PERSON_REPORT_REASONS).map(reason => `<option value="${reason}">${REPORT_REASONS[reason]}</option>`).join("");
       document.getElementById("reportPersonName").textContent = `${lessonReport ? "Reporting a lesson by" : "Reporting"} ${button.dataset.reportName || "this member"}. Only My Sign administrators see this report.`;
+      form.elements.reviewId.value = button.dataset.reportReview || "";
+      if (button.dataset.reportKind === "review") {
+        document.getElementById("reportTitle").textContent = "Ask to remove this review";
+        document.getElementById("reportReason").innerHTML = '<option value="review_removal" selected>Remove this review</option>';
+        document.getElementById("reportPersonName").textContent = `Review by ${button.dataset.reportName || "a member"}. The admin will read the review and your reason, then decide whether to remove it.`;
+      }
       closeDialog("lessonBackdrop");
       openDialog("reportBackdrop");
     }
@@ -1252,6 +1387,7 @@
       const { error } = await db.from("reports").insert({
         reported_id: String(values.get("reportedId")),
         lesson_id: String(values.get("lessonId")) || null,
+        review_id: String(values.get("reviewId") || "") || null,
         reason: String(values.get("reason")),
         details: String(values.get("details")).trim()
       });
@@ -1276,10 +1412,12 @@
       const rows = reports.map(report => `<div class="dashboard-row"><div class="dashboard-avatar" aria-hidden="true">${report.status === "open" ? "!" : "✓"}</div><div style="min-width:0;flex:1">
           <strong>${escapeHTML(REPORT_REASONS[report.reason] || report.reason)} · ${escapeHTML(report.reported_name)}${report.reported_suspended ? " (suspended)" : ""}</strong>
           <small>Reported: ${escapeHTML(report.reported_name)} · ${report.reported_role ? `${report.reported_role === "teacher" ? "Signer / teacher" : "Learner"} · ${escapeHTML(countryName(report.reported_country))}` : "Account deleted"}${report.reported_email ? ` · ${escapeHTML(report.reported_email)}` : ""}</small>
-          <small>By: ${escapeHTML(report.reporter_name)} · ${escapeHTML(report.reporter_email)} · ${escapeHTML(new Date(report.created_at).toLocaleString())}</small>
+          <small>By: ${escapeHTML(report.reporter_name)} · ${escapeHTML(report.reporter_email)} · ${escapeHTML(formatDateTime(report.created_at))}</small>
           ${report.lesson_title ? `<small>Lesson: ${escapeHTML(report.lesson_title)}</small>` : ""}
+          ${report.review_id ? `<small class="payment-note"><strong>Review ${stars(report.review_rating)}</strong>${report.review_feedback ? `\n${escapeHTML(report.review_feedback)}` : ""}</small>` : report.reason === "review_removal" ? "<small>This review has already been deleted.</small>" : ""}
           ${report.details ? `<small class="payment-note">${escapeHTML(report.details)}</small>` : ""}
         </div><div class="dashboard-actions"><span class="request-status ${report.status === "open" ? "pending" : "accepted"}">${report.status}</span>
+          ${report.review_id ? `<button class="button danger small" type="button" data-admin-delete-review="${escapeHTML(report.review_id)}">Delete review</button>` : ""}
           ${report.status === "open" ? `<button class="button outline small" type="button" data-review-report="${escapeHTML(report.report_id)}">Mark reviewed</button>` : ""}
           ${report.reported_id ? `<button class="button ${report.reported_suspended ? "outline " : ""}small" type="button" data-suspend-user="${escapeHTML(report.reported_id)}" data-suspend="${report.reported_suspended ? "false" : "true"}" data-suspend-name="${escapeHTML(report.reported_name)}">${report.reported_suspended ? "Unsuspend" : "Suspend user"}</button>` : ""}
         </div></div>`).join("");
@@ -1335,11 +1473,65 @@
         showToast("Profile picture removed.");
         return;
       }
+      const reviewRequest = event.target.closest("[data-review-request]");
+      if (reviewRequest) {
+        const form = document.getElementById("reviewForm");
+        const existing = reviews.find(review => review.requestId === reviewRequest.dataset.reviewRequest && review.reviewerId === account.id);
+        form.reset();
+        form.elements.requestId.value = reviewRequest.dataset.reviewRequest;
+        form.elements.revieweeId.value = reviewRequest.dataset.reviewee;
+        form.elements.reviewId.value = existing?.id || "";
+        if (existing) {
+          form.querySelector(`input[name="rating"][value="${existing.rating}"]`).checked = true;
+          form.querySelector(`input[name="recommend"][value="${existing.recommend ? "yes" : "no"}"]`).checked = true;
+          form.elements.feedback.value = existing.feedback;
+        }
+        document.getElementById("reviewTitle").textContent = `Rate ${reviewRequest.dataset.otherName}`;
+        document.getElementById("deleteReviewButton").hidden = !existing;
+        openDialog("reviewBackdrop");
+        return;
+      }
+      const proposeButton = event.target.closest("[data-propose-time]");
+      if (proposeButton) {
+        const form = document.getElementById("proposeTimeForm");
+        form.reset();
+        form.elements.requestId.value = proposeButton.dataset.proposeTime;
+        document.getElementById("proposeTimeTutor").textContent = `${proposeButton.dataset.otherName} can accept it, decline it, or suggest another time.`;
+        const now = new Date(Date.now() - new Date().getTimezoneOffset() * 60000);
+        form.elements.proposedTime.min = now.toISOString().slice(0, 16);
+        openDialog("proposeTimeBackdrop");
+        return;
+      }
+      const newTimeButton = event.target.closest("[data-new-time-action]");
+      if (newTimeButton) {
+        const accept = newTimeButton.dataset.newTimeAction === "accept";
+        newTimeButton.disabled = true;
+        const { error } = await db.rpc("respond_to_new_time", { p_request_id: newTimeButton.dataset.requestId, p_accept: accept });
+        if (error) {
+          newTimeButton.disabled = false;
+          showToast(error.message);
+          return;
+        }
+        await loadAccountData();
+        showToast(accept ? "New time accepted. The lesson is booked for that time." : "Time declined. You can suggest another time.");
+        return;
+      }
       const reviewButton = event.target.closest("[data-review-report]");
       if (reviewButton) {
         reviewButton.disabled = true;
         const { error } = await db.rpc("admin_review_report", { p_report_id: reviewButton.dataset.reviewReport });
         if (error) showToast(error.message);
+        loadAdminReports();
+        return;
+      }
+      const adminDeleteReview = event.target.closest("[data-admin-delete-review]");
+      if (adminDeleteReview) {
+        if (!window.confirm("Delete this review for everyone?")) return;
+        adminDeleteReview.disabled = true;
+        const { error } = await db.rpc("admin_delete_review", { p_review_id: adminDeleteReview.dataset.adminDeleteReview });
+        if (error) showToast(error.message);
+        else showToast("Review deleted.");
+        await loadAccountData();
         loadAdminReports();
         return;
       }
@@ -1441,6 +1633,81 @@
       } catch (error) {
         showToast(error.message || "Could not upload the picture.");
       }
+    });
+    document.addEventListener("click", event => {
+      const showReviews = event.target.closest("[data-show-reviews]");
+      if (!showReviews) return;
+      const userId = showReviews.dataset.showReviews;
+      const summary = ratingSummary(userId);
+      document.getElementById("reviewsTitle").textContent = `Reviews of ${showReviews.dataset.name || personName(userId)}`;
+      document.getElementById("reviewsSummary").textContent = summary ? `★ ${summary.average.toFixed(1)} from ${summary.count} reviews · ${summary.recommendCount} recommend` : "No reviews yet.";
+      document.getElementById("reviewsList").innerHTML = reviewListHTML(reviews.filter(review => review.revieweeId === userId), account?.id === userId);
+      openDialog("reviewsBackdrop");
+    });
+    document.getElementById("reviewForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      if (!requireDatabase() || !account) return;
+      const form = event.currentTarget;
+      const values = new FormData(form);
+      if (!values.get("rating") || !values.get("recommend")) {
+        showToast("Choose a star rating and whether you would recommend them.");
+        return;
+      }
+      const review = {
+        rating: Number(values.get("rating")),
+        recommend: values.get("recommend") === "yes",
+        feedback: String(values.get("feedback")).trim()
+      };
+      setBusy(form, true);
+      const reviewId = String(values.get("reviewId"));
+      const { error } = reviewId
+        ? await db.from("reviews").update({ ...review, updated_at: new Date().toISOString() }).eq("id", reviewId)
+        : await db.from("reviews").insert({ ...review, request_id: String(values.get("requestId")), reviewee_id: String(values.get("revieweeId")) });
+      setBusy(form, false);
+      if (error) {
+        showToast(error.message);
+        return;
+      }
+      closeDialog("reviewBackdrop");
+      await loadAccountData();
+      showToast("Thank you. Your review is saved.");
+    });
+    document.getElementById("deleteReviewButton").addEventListener("click", async () => {
+      const reviewId = document.getElementById("reviewForm").elements.reviewId.value;
+      if (!reviewId || !window.confirm("Delete your review?")) return;
+      const { error } = await db.from("reviews").delete().eq("id", reviewId);
+      if (error) {
+        showToast(error.message);
+        return;
+      }
+      closeDialog("reviewBackdrop");
+      await loadAccountData();
+      showToast("Your review was deleted.");
+    });
+    document.getElementById("proposeTimeForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      if (!requireDatabase() || !account) return;
+      const form = event.currentTarget;
+      const values = new FormData(form);
+      const proposedTime = new Date(String(values.get("proposedTime")));
+      if (Number.isNaN(proposedTime.getTime()) || proposedTime <= new Date()) {
+        showToast("Choose a date and time in the future.");
+        return;
+      }
+      setBusy(form, true);
+      const { error } = await db.rpc("propose_new_time", {
+        p_request_id: String(values.get("requestId")),
+        p_time: proposedTime.toISOString(),
+        p_message: String(values.get("message")).trim()
+      });
+      setBusy(form, false);
+      if (error) {
+        showToast(error.message);
+        return;
+      }
+      closeDialog("proposeTimeBackdrop");
+      await loadAccountData();
+      showToast("New time sent. They can accept it, decline it, or suggest another time.");
     });
     document.getElementById("deleteAccountForm").addEventListener("submit", async event => {
       event.preventDefault();
