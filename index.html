@@ -107,6 +107,26 @@
     .card-save[aria-pressed="true"] { border-color: var(--green); background: var(--green-soft); }
     .empty-state { grid-column: 1 / -1; padding: 42px 16px; border: 1px dashed #d3dcd1; border-radius: 7px; color: var(--muted); text-align: center; font-size: 12px; }
 
+    .recommend-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+    .recommend-card { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+    .recommend-text { display: grid; flex: 1; min-width: 0; gap: 2px; }
+    .recommend-text strong { font-size: 14px; }
+    .recommend-text small { overflow: hidden; color: var(--muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+    .recommend-why { color: var(--green); font-size: 11.5px; font-weight: 700; }
+    .recommend-strip { margin: 0 0 18px; padding: 18px; border: 1px solid #eadfba; border-radius: 14px; background: linear-gradient(135deg, #fbf6e6, #f2f8f4); }
+    .recommend-strip-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .recommend-strip-head h3 { margin: 0; font-size: 17px; }
+    .recommend-badge { padding: 4px 9px; border-radius: 99px; background: var(--gold); color: #282d20; font-size: 10.5px; font-weight: 700; letter-spacing: .3px; text-transform: uppercase; }
+    .how-it-works { margin: 0 0 40px; }
+    .how-it-works h2 { margin: 0 0 18px; font-size: 24px; }
+    .how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .how-card { padding: 22px 24px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+    .how-card h3 { margin: 0 0 12px; font-size: 17px; }
+    .how-card ol { display: grid; gap: 10px; margin: 0; padding-left: 20px; color: #3d4f47; font-size: 14px; line-height: 1.55; }
+    .how-card li::marker { color: var(--green); font-weight: 700; }
+    .dashboard-panel.how-it-works { margin: 0 0 18px; padding: 0; border: 0; background: transparent; }
+    .dashboard-panel.getting-started { margin-bottom: 18px; border-color: #bcd6c5; background: #f2f8f4; }
+    .getting-started .dashboard-actions { margin-top: 14px; }
     .creator-band { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 22px; margin: 0 0 65px; padding: 24px 27px; border-radius: 7px; background: #f0e7d2; }
     .creator-band h2 { font-family: "DM Serif Display", Georgia, serif; font-size: 22px; font-weight: 400; }
     .creator-band p { margin: 6px 0 0; color: #70674f; font-size: 11px; line-height: 1.6; }
@@ -203,6 +223,12 @@
     .two-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .drop-zone { display: grid; min-height: 90px; place-items: center; padding: 12px; border: 1px dashed #b9cbb9; border-radius: 5px; background: #f8faf6; text-align: center; cursor: pointer; }
     .drop-zone { border-radius: 12px; }
+    .price-options.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .upload-progress { margin-top: 6px; }
+    .upload-bar { overflow: hidden; height: 10px; border-radius: 99px; background: var(--green-soft); }
+    .upload-bar span { display: block; width: 0; height: 100%; border-radius: 99px; background: var(--green); transition: width 200ms ease; }
+    .upload-progress p { margin: 8px 0 0; color: var(--muted); font-size: 12.5px; }
+    .youtube-player { width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 5px; background: #172d29; }
     .drop-zone strong { font-size: 14px; }
     .drop-zone span { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; }
     .drop-zone input { display: none; }
@@ -247,13 +273,15 @@
       .lesson-cover { aspect-ratio: 1.85; }
       .lesson-card h3, .lesson-description { min-height: 0; }
       .creator-band { grid-template-columns: 1fr; margin-bottom: 40px; padding: 20px; }
+      .how-grid { grid-template-columns: 1fr; }
+      .recommend-grid { grid-template-columns: 1fr; }
       .creator-band .button { justify-self: start; }
       footer { flex-direction: column; gap: 8px; }
       .two-fields { grid-template-columns: 1fr; gap: 0; }
       .dialog { padding: 22px 18px 18px; border-radius: 14px; }
       .dialog-head h2 { font-size: 25px; }
       .field input, .field select, .field textarea { font-size: 16px; }
-      .price-options { grid-template-columns: 1fr; }
+      .price-options, .price-options.three { grid-template-columns: 1fr; }
       .role-card { padding: 14px; }
       .dialog .dialog-actions .button { flex: 1 1 auto; }
     }
@@ -265,6 +293,7 @@
     <a class="brand" href="#top" aria-label="My Sign home"><span class="brand-mark" aria-hidden="true">M<span>.</span></span> My Sign</a>
     <nav class="top-nav" aria-label="Main navigation">
       <a href="#browse">Explore lessons</a>
+      <a href="#how-it-works">How it works</a>
       <a href="#teach">For signers</a>
     </nav>
     <div class="top-actions">
@@ -296,6 +325,7 @@
             <label class="sr-only" for="sortLessons">Sort lessons</label><select class="sort-select" id="sortLessons"><option value="featured">Featured</option><option value="free">Free first</option></select>
           </div>
         </div>
+        <div id="recommendedStrip"></div>
         <div class="filter-row" role="group" aria-label="Filter lessons by topic">
           <span class="filter-label">SHOW</span>
           <button class="filter" type="button" data-category="All" aria-pressed="true">All lessons</button>
@@ -304,6 +334,11 @@
           <button class="filter" type="button" data-category="My lessons" aria-pressed="false">My lessons</button>
         </div>
         <div class="lesson-grid" id="lessonGrid" aria-live="polite"></div>
+      </section>
+
+      <section class="how-it-works public-only" id="how-it-works" aria-labelledby="howTitle">
+        <p class="section-kicker">HOW IT WORKS</p><h2 id="howTitle">Start in a few easy steps</h2>
+        <div class="how-grid" id="howGrid"></div>
       </section>
 
       <section class="creator-band public-only" id="teach" aria-labelledby="creatorTitle">
@@ -316,7 +351,7 @@
         <p>Harassment is strictly prohibited, including threats, sexual harassment, stalking, discrimination, abuse, and repeated unwanted contact. Anyone found to have violated this rule will be removed from the platform. Credible threats or suspected criminal conduct will be referred to law enforcement where appropriate and permitted by law. If someone is in immediate danger, contact local emergency services.</p>
       </section>
 
-      <section id="how-it-works" class="sr-only public-only" aria-label="How the marketplace works">Creators share sign-language video lessons, choose free or paid access, and learners can browse community lessons.</section>
+
       <footer class="public-only">
         <span>My Sign · Learn together</span>
         <span><button class="inline-link" type="button" data-open-terms>Platform agreement</button> · <button class="inline-link" type="button" data-open-privacy>Privacy policy</button> · © 2026 My Sign</span>
@@ -409,7 +444,7 @@
       <div class="dialog-head"><div><h2 id="publishTitle">Share a lesson</h2><p>Teach a sign or topic you know.</p></div><button class="icon-close" type="button" data-close="publishBackdrop" aria-label="Close">×</button></div>
       <form id="publishForm">
         <div class="field"><label for="lessonTitle">Lesson title</label><input id="lessonTitle" name="title" required maxlength="70" placeholder="e.g. Greetings and introductions"></div>
-        <div class="field"><label for="lessonDescription">What will learners see?</label><textarea id="lessonDescription" name="description" maxlength="200" required placeholder="Briefly describe what you demonstrate in the video"></textarea></div>
+        <div class="field"><label for="lessonDescription">What will learners learn?</label><textarea id="lessonDescription" name="description" maxlength="200" required placeholder="e.g. Basic greetings, names, and how to introduce yourself"></textarea></div>
         <div class="two-fields">
           <div class="field"><label for="lessonCategory">Topic</label><select id="lessonCategory" name="category"><option>Everyday life</option><option>Community</option><option>Learning basics</option><option>Stories</option></select></div>
           <div class="field"><label for="creatorName">Your display name</label><input id="creatorName" name="creator" required maxlength="35" placeholder="How learners know you"></div>
@@ -428,7 +463,14 @@
           <div class="field"><label for="lessonCurrency">Your currency</label><select id="lessonCurrency" name="currency"><option value="" selected disabled>Choose currency</option><option value="ETB">ETB</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="KES">KES</option><option value="NGN">NGN</option><option value="ZAR">ZAR</option><option value="CAD">CAD</option><option value="AUD">AUD</option></select></div>
           <small>Learners pay you directly. Add your Telebirr, CBE Birr, or bank details in your teaching profile.</small>
         </div>
-        <div class="field"><label for="lessonVideo">Lesson video</label><label class="drop-zone" for="lessonVideo"><span><strong id="videoLabel">Choose a video to upload</strong><span>MP4, WebM, or MOV · up to 50 MB</span></span><input id="lessonVideo" name="video" type="file" accept="video/mp4,video/webm,video/quicktime"></label></div>
+        <div class="field"><label>Lesson video</label><div class="price-options three">
+          <label class="price-option"><input type="radio" name="videoSource" value="upload" checked><span><strong>Upload video</strong><span>From your phone.</span></span></label>
+          <label class="price-option"><input type="radio" name="videoSource" value="youtube"><span><strong>YouTube link</strong><span>Free lessons.</span></span></label>
+          <label class="price-option"><input type="radio" name="videoSource" value="none"><span><strong>No video</strong><span>Live lessons only.</span></span></label>
+        </div></div>
+        <div class="field" id="videoUploadField"><label class="drop-zone" for="lessonVideo"><span><strong id="videoLabel">Choose a video to upload</strong><span>MP4, MOV, WebM, M4V, or 3GP · up to 50 MB</span></span><input id="lessonVideo" name="video" type="file" accept="video/*,.mp4,.mov,.m4v,.webm,.3gp"></label><small>Video too big? Record in 720p (iPhone: Settings → Camera → Record Video → 720p; Android: camera settings → video size → 720p), keep each lesson short, or use a YouTube link for longer free lessons.</small></div>
+        <div class="field" id="videoLinkField" hidden><label for="lessonYoutube">YouTube link</label><input id="lessonYoutube" name="youtube" type="url" inputmode="url" placeholder="https://youtu.be/..."><small>Upload the video to YouTube as <strong>Unlisted</strong>, then paste its link here. YouTube links work for free lessons only, because anyone with the link can watch.</small></div>
+        <div class="upload-progress" id="uploadProgress" hidden><div class="upload-bar"><span id="uploadBar"></span></div><p id="uploadText">Uploading… 0%</p></div>
         <p class="form-notice">For accessible signing, keep your hands, face, and upper body clearly in frame.</p>
         <div class="dialog-actions"><button class="button outline" type="button" data-close="publishBackdrop">Cancel</button><button class="button" type="submit">Publish lesson</button></div>
       </form>
@@ -448,7 +490,8 @@
     <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="bookingTitle">
       <div class="dialog-head"><div><p class="section-kicker">LESSON REQUEST</p><h2 id="bookingTitle">Request a lesson</h2><p id="bookingTutorName"></p></div><button class="icon-close" type="button" data-close="bookingBackdrop" aria-label="Close">×</button></div>
       <form id="bookingForm">
-        <div class="field"><label for="bookingFormat">Teaching format</label><select id="bookingFormat" name="format" required></select></div>
+        <div class="field" id="bookingLessonField"><label for="bookingLesson">What would you like to learn?</label><select id="bookingLesson" name="lesson"></select></div>
+        <div class="field"><label for="bookingFormat">Online or in person?</label><select id="bookingFormat" name="format" required></select></div>
         <div class="field"><label for="bookingTime">Preferred date and time</label><input id="bookingTime" name="preferredTime" type="datetime-local" required></div>
         <div class="field"><label for="bookingMessage">Message to the tutor</label><textarea id="bookingMessage" name="message" maxlength="500" placeholder="Tell the tutor what you’d like to learn"></textarea></div>
         <p class="form-notice">Your request stays pending until the tutor responds. Only you and the tutor can see this request.</p>
@@ -463,7 +506,7 @@
       <form id="reportForm">
         <input type="hidden" name="reportedId">
         <input type="hidden" name="lessonId">
-        <div class="field"><label for="reportReason">What happened?</label><select id="reportReason" name="reason" required><option value="" selected disabled>Choose a reason</option><option value="harassment">Harassment or abuse</option><option value="inappropriate">Inappropriate content</option><option value="fraud">Scam or fraud</option><option value="fake">Fake profile</option><option value="other">Something else</option></select></div>
+        <div class="field"><label for="reportReason">What happened?</label><select id="reportReason" name="reason" required></select></div>
         <div class="field"><label for="reportDetails">Details</label><textarea id="reportDetails" name="details" maxlength="1000" placeholder="Tell us what happened, and when"></textarea></div>
         <p class="form-notice">The person you report will not be told who reported them. If someone is in immediate danger, contact local emergency services.</p>
         <div class="dialog-actions"><button class="button outline" type="button" data-close="reportBackdrop">Cancel</button><button class="button" type="submit">Send report</button></div>
@@ -513,7 +556,9 @@
     const VIDEO_BUCKET = "lesson-videos";
     const AVATAR_BUCKET = "avatars";
     const CONTACT_EMAIL = "support@accessedsolution.com";
-    const REPORT_REASONS = { harassment: "Harassment or abuse", inappropriate: "Inappropriate content", fraud: "Scam or fraud", fake: "Fake profile", other: "Something else" };
+    const REPORT_REASONS = { harassment: "Harassment or abuse", inappropriate: "Inappropriate content", fraud: "Scam or fraud", fake: "Fake profile", irrelevant: "Not a real sign language lesson", other: "Something else" };
+    const LESSON_REPORT_REASONS = ["irrelevant", "inappropriate", "fraud", "other"];
+    const PERSON_REPORT_REASONS = ["harassment", "inappropriate", "fraud", "fake", "other"];
     const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
     const COUNTRY_CODES = "AF AX AL DZ AS AD AO AI AG AR AM AW AU AT AZ BS BH BD BB BY BE BZ BJ BM BT BO BQ BA BW BR IO BN BG BF BI CV KH CM CA KY CF TD CL CN CX CC CO KM CG CD CK CR CI HR CU CW CY CZ DK DJ DM DO EC EG SV GQ ER EE SZ ET FK FO FJ FI FR GF PF GA GM GE DE GH GI GR GL GD GP GU GT GG GN GW GY HT VA HN HK HU IS IN ID IR IQ IE IM IL IT JM JP JE JO KZ KE KI XK KP KR KW KG LA LV LB LS LR LY LI LT LU MO MG MW MY MV ML MT MH MQ MR MU YT MX FM MD MC MN ME MS MA MZ MM NA NR NP NL NC NZ NI NE NG NU NF MK MP NO OM PK PW PS PA PG PY PE PH PN PL PT PR QA RE RO RU RW BL SH KN LC MF PM VC WS SM ST SA SN RS SC SL SG SX SK SI SB SO ZA SS ES LK SD SR SJ SE CH SY TW TJ TZ TH TL TG TK TO TT TN TR TM TC TV UG UA AE GB US UY UZ VU VE VN VG VI WF EH YE ZM ZW".split(" ");
     const regionNames = typeof Intl.DisplayNames === "function" ? new Intl.DisplayNames([navigator.language || "en", "en"], { type: "region" }) : null;
@@ -541,7 +586,6 @@
     let toastTimeout;
     let dashboardMode = true;
     let dashboardTab = "overview";
-    let requestedLessonId = "";
 
     function requireDatabase() {
       if (db) return true;
@@ -550,7 +594,7 @@
     }
 
     function toLesson(row) {
-      return { id: row.id, ownerId: row.owner_id, country: row.country, title: row.title, description: row.description, category: row.category, creator: row.creator, price: Number(row.price), currency: row.currency, access: row.access, formats: row.formats, location: row.location, videoPath: row.video_path, duration: "Video lesson", coverMark: (row.creator || "S").trim().charAt(0).toUpperCase(), example: false };
+      return { id: row.id, ownerId: row.owner_id, country: row.country, title: row.title, description: row.description, category: row.category, creator: row.creator, price: Number(row.price), currency: row.currency, access: row.access, formats: row.formats, location: row.location, videoPath: row.video_path, youtubeId: row.youtube_id, duration: row.video_path ? "Video lesson" : row.youtube_id ? "YouTube video" : "Live lesson", coverMark: (row.creator || "S").trim().charAt(0).toUpperCase(), example: false };
     }
 
     function toRequest(row) {
@@ -683,6 +727,9 @@
         const paidLesson = request.status === "accepted" && lesson?.access === "paid";
         const actions = [];
         let paymentNote = "";
+        if (request.status === "pending") {
+          paymentNote = `<small class="payment-note">${teacherView ? "Accept to share both of your email addresses and open the video room. Until you accept, no contact details are shared." : `Waiting for ${escapeHTML(request.teacherName)} to accept. Contact details and the video room appear after they accept.`}</small>`;
+        }
         if (teacherView && request.status === "pending") {
           actions.push(`<span class="request-status pending">Pending</span><button class="button small" type="button" data-request-action="accepted" data-request-id="${escapeHTML(request.id)}">Accept</button><button class="button outline small" type="button" data-request-action="declined" data-request-id="${escapeHTML(request.id)}">Decline</button>`);
         } else {
@@ -702,13 +749,13 @@
         }
         if (videoReady) actions.push(`<a class="button small" href="${escapeHTML(videoRoomUrl(request))}" target="_blank" rel="noopener">🎥 Start video lesson</a>`);
         const controls = `<div class="dashboard-actions">${actions.join("")}</div>`;
-        return `<div class="dashboard-row"><div class="dashboard-avatar" aria-hidden="true">${avatarHTML(teacherView ? request.learnerId : request.teacherId, otherPerson)}</div><div style="min-width:0;flex:1"><strong>${escapeHTML(request.lessonTitle)}</strong><small>${escapeHTML(otherPerson || "Learner")} · ${escapeHTML(formatLabel)} · ${escapeHTML(timeLabel)}</small>${contactEmail ? `<small>Contact: ${escapeHTML(contactEmail)}</small>` : ""}${request.message ? `<small>${escapeHTML(request.message)}</small>` : ""}${videoReady ? "<small>Private video room for you and your " + (teacherView ? "learner" : "tutor") + ". Open it at the lesson time. Allow camera and microphone when asked.</small>" : ""}${paymentNote}<button class="inline-link report-link" type="button" data-report-user="${escapeHTML(teacherView ? request.learnerId : request.teacherId)}" data-report-name="${escapeHTML(otherPerson || "")}" data-report-lesson="${escapeHTML(request.lessonId)}">Report a problem</button></div>${controls}</div>`;
+        return `<div class="dashboard-row"><div class="dashboard-avatar" aria-hidden="true">${avatarHTML(teacherView ? request.learnerId : request.teacherId, otherPerson)}</div><div style="min-width:0;flex:1"><strong>${escapeHTML(request.lessonTitle)}</strong><small>${escapeHTML(otherPerson || "Learner")} · ${escapeHTML(formatLabel)} · ${escapeHTML(timeLabel)}</small>${contactEmail ? `<small>Contact: ${escapeHTML(contactEmail)}</small>` : ""}${request.message ? `<small>${escapeHTML(request.message)}</small>` : ""}${videoReady ? "<small>Private video room for you and your " + (teacherView ? "learner" : "tutor") + ". Open it at the lesson time. Allow camera and microphone when asked.</small>" : ""}${paymentNote}<button class="inline-link report-link" type="button" data-report-user="${escapeHTML(teacherView ? request.learnerId : request.teacherId)}" data-report-name="${escapeHTML(otherPerson || "")}" data-report-lesson="${escapeHTML(request.lessonId || "")}">Report a problem</button></div>${controls}</div>`;
       }).join("");
     }
 
     function dashboardMemberRows(list, emptyText) {
       if (!list.length) return `<div class="dashboard-empty">${emptyText}</div>`;
-      return list.map(member => `<div class="dashboard-row"><div class="dashboard-avatar" aria-hidden="true">${avatarHTML(member.id, member.name)}</div><div style="min-width:0;flex:1"><strong>${escapeHTML(member.name)}</strong><small>${member.role === "teacher" ? "Signer / teacher" : "Learner"}${member.city ? ` · ${escapeHTML(member.city)}` : ""}</small>${member.topics ? `<small>${escapeHTML(member.topics)}</small>` : ""}${member.bio ? `<small>${escapeHTML(member.bio)}</small>` : ""}</div><button class="button outline small" type="button" data-report-user="${escapeHTML(member.id)}" data-report-name="${escapeHTML(member.name)}">Report</button></div>`).join("");
+      return list.map(member => `<div class="dashboard-row"><div class="dashboard-avatar" aria-hidden="true">${avatarHTML(member.id, member.name)}</div><div style="min-width:0;flex:1"><strong>${escapeHTML(member.name)}</strong><small>${member.role === "teacher" ? "Signer / teacher" : "Learner"}${member.city ? ` · ${escapeHTML(member.city)}` : ""}</small>${member.topics ? `<small>${escapeHTML(member.topics)}</small>` : ""}${member.bio ? `<small>${escapeHTML(member.bio)}</small>` : ""}</div>${account?.role === "learner" && member.role === "teacher" ? `<button class="button small" type="button" data-connect-tutor="${escapeHTML(member.id)}" data-connect-name="${escapeHTML(member.name)}">Connect</button>` : ""}</div>`).join("");
     }
 
     function renderDashboard() {
@@ -722,6 +769,7 @@
       const tabs = teacher
         ? [{ id: "overview", label: "Overview" }, { id: "requests", label: `Requests${myRequests.some(request => request.status === "pending") ? ` (${myRequests.filter(request => request.status === "pending").length})` : ""}` }, { id: "lessons", label: "My lessons" }, { id: "community", label: "Community" }, { id: "profile", label: "Teaching profile" }]
         : [{ id: "overview", label: "Overview" }, { id: "requests", label: "My requests" }, { id: "saved", label: "Saved tutors" }, { id: "community", label: "Community" }, { id: "profile", label: "My profile" }];
+      tabs.push({ id: "help", label: "How it works" });
       if (account.isAdmin) tabs.push({ id: "admin", label: "Admin" });
       if (!tabs.some(tab => tab.id === dashboardTab)) dashboardTab = "overview";
 
@@ -737,6 +785,10 @@
         document.getElementById("dashboardPublishButton").hidden = true;
         document.getElementById("dashboardIntro").textContent = "";
         content.innerHTML = `<section class="dashboard-panel"><h2>Your account is suspended</h2><p class="section-intro">After a report, an administrator suspended this account for breaking the community rules. While suspended, you cannot see other members, publish lessons, or send requests. If you think this is a mistake, contact <a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a>.</p></section>`;
+        return;
+      }
+      if (dashboardTab === "help") {
+        content.innerHTML = `<section class="dashboard-panel how-it-works">${howItWorksCard(account.role)}</section>`;
         return;
       }
       if (dashboardTab === "admin" && account.isAdmin) {
@@ -770,15 +822,69 @@
         return;
       }
 
+      const gettingStarted = teacher && !myLessons.length
+        ? '<section class="dashboard-panel getting-started"><h2>Post your first lesson</h2><p class="section-intro">Learners can only find you after you post a lesson. It takes about 2 minutes: a title, one sentence, and a short video or YouTube link.</p><div class="dashboard-actions"><button class="button" type="button" data-open-publish>+ Add a lesson</button><button class="button outline" type="button" data-dashboard-tab="help">How it works</button></div></section>'
+        : !teacher && !myRequests.length
+          ? '<section class="dashboard-panel getting-started"><h2>Find your first tutor</h2><p class="section-intro">Open the tutor list or your Community tab, then press <strong>Connect</strong> on a tutor to request a lesson.</p><div class="dashboard-actions"><button class="button" type="button" data-dashboard-tab="community">See tutors in Community</button><button class="button outline" type="button" data-dashboard-tab="help">How it works</button></div></section>'
+          : "";
       if (teacher) {
         const freeCount = myLessons.filter(lesson => lesson.price === 0).length;
         const paidCount = myLessons.filter(lesson => lesson.price > 0).length;
         const pendingCount = myRequests.filter(request => request.status === "pending").length;
-        content.innerHTML = `<div class="dashboard-stats"><div class="dashboard-stat"><strong>${myLessons.length}</strong><span>Published lessons</span></div><div class="dashboard-stat"><strong>${pendingCount}</strong><span>Pending requests</span></div><div class="dashboard-stat"><strong>${freeCount} / ${paidCount}</strong><span>Free / paid lessons</span></div></div><section class="dashboard-panel"><h2>New requests</h2>${dashboardRequestRows(myRequests.filter(request => request.status === "pending").slice(0, 3), true)}<button class="button outline small" type="button" data-dashboard-tab="requests">View all requests</button></section><section class="dashboard-panel"><h2>Recent lessons</h2>${dashboardLessonRows(myLessons.slice(0, 4), "Manage", "data-dashboard-tab-to-lessons")}</section><section class="dashboard-panel"><h2>Teaching profile</h2><p class="section-intro">${escapeHTML(account.profile.bio || "Add a short introduction so learners can get to know you.")}</p><button class="button outline small" type="button" data-dashboard-tab="profile">Edit profile</button></section>`;
+        content.innerHTML = `${gettingStarted}<div class="dashboard-stats"><div class="dashboard-stat"><strong>${myLessons.length}</strong><span>Published lessons</span></div><div class="dashboard-stat"><strong>${pendingCount}</strong><span>Pending requests</span></div><div class="dashboard-stat"><strong>${freeCount} / ${paidCount}</strong><span>Free / paid lessons</span></div></div><section class="dashboard-panel"><h2>New requests</h2>${dashboardRequestRows(myRequests.filter(request => request.status === "pending").slice(0, 3), true)}<button class="button outline small" type="button" data-dashboard-tab="requests">View all requests</button></section><section class="dashboard-panel"><h2>Recent lessons</h2>${dashboardLessonRows(myLessons.slice(0, 4), "Manage", "data-dashboard-tab-to-lessons")}</section><section class="dashboard-panel"><h2>Teaching profile</h2><p class="section-intro">${escapeHTML(account.profile.bio || "Add a short introduction so learners can get to know you.")}</p><button class="button outline small" type="button" data-dashboard-tab="profile">Edit profile</button></section>`;
         return;
       }
 
-      content.innerHTML = `<div class="dashboard-stats"><div class="dashboard-stat"><strong>${saved.length}</strong><span>Saved tutors</span></div><div class="dashboard-stat"><strong>${myRequests.length}</strong><span>Lesson requests</span></div><div class="dashboard-stat"><strong>${myRequests.filter(request => request.status === "accepted").length}</strong><span>Accepted lessons</span></div></div><section class="dashboard-panel"><h2>Recent lesson requests</h2>${dashboardRequestRows(myRequests.slice(0, 3), false)}<button class="button outline small" type="button" data-dashboard-tab="requests">View all requests</button></section><section class="dashboard-panel"><h2>Saved tutors</h2>${dashboardLessonRows(saved.slice(0, 4), "Open", "data-open-saved-tutor")}</section><section class="dashboard-panel"><h2>Keep learning</h2><p class="section-intro">Find a tutor in ${escapeHTML(country)} and save their listing here for easy access.</p><button class="button" type="button" id="dashboardBrowseButton">Browse tutors</button></section>`;
+      const recommendations = recommendedTutors();
+      const recommendPanel = recommendations.length
+        ? `<section class="dashboard-panel recommend-panel"><h2>Recommended tutors for you</h2><p class="section-intro">Based on what you want to learn and your city. Add both in <button class="inline-link" type="button" data-dashboard-tab="profile">My profile</button> for better matches.</p><div class="recommend-grid">${recommendCards(recommendations)}</div></section>`
+        : "";
+      content.innerHTML = `${gettingStarted}${recommendPanel}<div class="dashboard-stats"><div class="dashboard-stat"><strong>${saved.length}</strong><span>Saved tutors</span></div><div class="dashboard-stat"><strong>${myRequests.length}</strong><span>Lesson requests</span></div><div class="dashboard-stat"><strong>${myRequests.filter(request => request.status === "accepted").length}</strong><span>Accepted lessons</span></div></div><section class="dashboard-panel"><h2>Recent lesson requests</h2>${dashboardRequestRows(myRequests.slice(0, 3), false)}<button class="button outline small" type="button" data-dashboard-tab="requests">View all requests</button></section><section class="dashboard-panel"><h2>Saved tutors</h2>${dashboardLessonRows(saved.slice(0, 4), "Open", "data-open-saved-tutor")}</section><section class="dashboard-panel"><h2>Keep learning</h2><p class="section-intro">Find a tutor in ${escapeHTML(country)} and save their listing here for easy access.</p><button class="button" type="button" id="dashboardBrowseButton">Browse tutors</button></section>`;
+    }
+
+    // Suggests tutors in the learner's country: matching topics first, then same city,
+    // tutors with posted lessons, and free lessons. Skips tutors already requested.
+    function recommendedTutors(limit = 3) {
+      if (!account || account.role !== "learner") return [];
+      const words = text => (text || "").toLocaleLowerCase().split(/[^\p{L}\p{N}]+/u).filter(word => word.length > 2);
+      const wanted = new Set(words(`${account.profile.topics} ${account.profile.bio}`));
+      const myCity = (account.profile.city || "").trim().toLocaleLowerCase();
+      const alreadyRequested = new Set(requests.map(request => request.teacherId));
+      return members
+        .filter(member => member.role === "teacher" && !alreadyRequested.has(member.id))
+        .map(tutor => {
+          const tutorLessons = lessons.filter(lesson => lesson.ownerId === tutor.id);
+          const tutorWords = words(`${tutor.topics} ${tutor.bio} ${tutorLessons.map(lesson => `${lesson.title} ${lesson.category}`).join(" ")}`);
+          const topicMatches = new Set(tutorWords.filter(word => wanted.has(word))).size;
+          const sameCity = myCity && (tutor.city || "").trim().toLocaleLowerCase() === myCity;
+          const hasFree = tutorLessons.some(lesson => lesson.price === 0);
+          const score = topicMatches * 3 + (sameCity ? 2 : 0) + (tutorLessons.length ? 2 : 0) + (hasFree ? 1 : 0);
+          const why = topicMatches ? "Matches your interests" : sameCity ? `Near you in ${tutor.city}` : hasFree ? "Has free lessons" : tutorLessons.length ? "Has lessons ready" : "Tutor in your country";
+          return { tutor, score, why };
+        })
+        .sort((a, b) => b.score - a.score || a.tutor.name.localeCompare(b.tutor.name))
+        .slice(0, limit);
+    }
+
+    function recommendCards(items) {
+      return items.map(({ tutor, why }) => `<div class="recommend-card"><div class="dashboard-avatar" aria-hidden="true">${avatarHTML(tutor.id, tutor.name)}</div><div class="recommend-text"><strong>${escapeHTML(tutor.name)}</strong><small>${escapeHTML([tutor.city, tutor.topics].filter(Boolean).join(" · ") || "Sign language tutor")}</small><span class="recommend-why">${escapeHTML(why)}</span></div><button class="button small" type="button" data-connect-tutor="${escapeHTML(tutor.id)}" data-connect-name="${escapeHTML(tutor.name)}">Connect</button></div>`).join("");
+    }
+
+    function howItWorksCard(role) {
+      if (role === "teacher") {
+        return `<div class="how-card"><h3><span aria-hidden="true">🤟</span> For signers and teachers</h3><ol>
+          <li><strong>Join</strong> as a Deaf signer / teacher and choose your country.</li>
+          <li>Press <strong>+ Add a lesson</strong>. Give it a title, one sentence about what you teach, and a short video, or paste a YouTube link.</li>
+          <li>Choose <strong>free</strong> or <strong>paid</strong>. For paid lessons, add your Telebirr, CBE Birr, or bank details in your profile.</li>
+          <li>Open <strong>Requests</strong> to accept learners. At lesson time press <strong>🎥 Start video lesson</strong>. After a learner pays you, press <strong>Mark as paid</strong>.</li>
+        </ol></div>`;
+      }
+      return `<div class="how-card"><h3><span aria-hidden="true">📖</span> For learners</h3><ol>
+          <li><strong>Join</strong> as a learner and choose your country.</li>
+          <li><strong>Find a tutor</strong> in the tutor list, or in your <strong>Community</strong> tab, and press <strong>Connect</strong> or <strong>Request a lesson</strong>.</li>
+          <li>Choose <strong>online or in person</strong>, pick a <strong>date and time</strong>, and write a short message. Then press <strong>Send request</strong>.</li>
+          <li>When the tutor <strong>accepts</strong>, open <strong>My requests</strong>. At lesson time press <strong>🎥 Start video lesson</strong>. For paid lessons, pay the tutor using the details shown.</li>
+        </ol></div>`;
     }
 
     function escapeHTML(value) {
@@ -802,6 +908,10 @@
       const query = document.getElementById("searchInput").value.trim().toLocaleLowerCase();
       const sort = document.getElementById("sortLessons").value;
       const country = account ? countryName(account.country) : "";
+      const strip = recommendedTutors();
+      document.getElementById("recommendedStrip").innerHTML = strip.length
+        ? `<section class="recommend-strip" aria-labelledby="recommendTitle"><div class="recommend-strip-head"><span class="recommend-badge">Recommended for you</span><h3 id="recommendTitle">Tutors you may like</h3></div><div class="recommend-grid">${recommendCards(strip)}</div></section>`
+        : "";
       document.getElementById("browseIntro").textContent = account
         ? `Tutors in ${country}.`
         : "Join to see real tutors. These are sample profiles.";
@@ -863,6 +973,10 @@
 
     async function showLessonVideo(lesson) {
       const player = document.getElementById("lessonPlayer");
+      if (lesson.youtubeId) {
+        player.innerHTML = `<iframe class="youtube-player" src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(lesson.youtubeId)}?rel=0" title="${escapeHTML(lesson.title)} video lesson" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+        return;
+      }
       player.innerHTML = videoPlaceholder("▣", "Loading video…");
       const { data: signed, error } = await db.storage.from(VIDEO_BUCKET).createSignedUrl(lesson.videoPath, 60 * 60);
       if (activeLessonId !== lesson.id) return;
@@ -881,6 +995,8 @@
       const player = document.getElementById("lessonPlayer");
       if (lesson.example) {
         player.innerHTML = videoPlaceholder("▣", "This is a sample tutor profile, not a real lesson. Join to see real tutors.");
+      } else if (!lesson.videoPath && !lesson.youtubeId) {
+        player.innerHTML = videoPlaceholder("🤟", "This is a live lesson. Request a lesson below to choose a time with the tutor, online or in person.");
       } else if (!unlockedLesson) {
         player.innerHTML = videoPlaceholder("🔒", "This paid video unlocks after you request the lesson, pay your tutor, and your tutor confirms the payment.");
       } else {
@@ -893,13 +1009,28 @@
         access.innerHTML = '<p class="form-notice">This is your lesson. Learners can request it.</p>';
       } else {
         const priceNote = lesson.price > 0 ? ` Price: ${escapeHTML(formatPrice(lesson))}, paid directly to the tutor after they accept.` : "";
-        access.innerHTML = `<div class="dialog-actions" style="justify-content:start"><button class="button" type="button" id="requestBooking">Request a lesson</button></div><p class="form-notice">Requests are pending until the tutor accepts or declines.${priceNote}</p>${account ? `<button class="inline-link report-link" type="button" data-report-user="${escapeHTML(lesson.ownerId)}" data-report-name="${escapeHTML(lesson.creator)}" data-report-lesson="${escapeHTML(lesson.id)}">Report this tutor or lesson</button>` : ""}`;
+        access.innerHTML = `<div class="dialog-actions" style="justify-content:start"><button class="button" type="button" id="requestBooking">Request a lesson</button></div><p class="form-notice">Requests are pending until the tutor accepts or declines.${priceNote}</p>${account ? `<button class="inline-link report-link" type="button" data-report-user="${escapeHTML(lesson.ownerId)}" data-report-name="${escapeHTML(lesson.creator)}" data-report-lesson="${escapeHTML(lesson.id)}" data-report-kind="lesson">Report this lesson</button>` : ""}`;
         document.getElementById("requestBooking").addEventListener("click", () => beginBooking(lesson));
       }
       openDialog("lessonBackdrop");
     }
 
+    let requestedTeacherId = "";
+
     function beginBooking(lesson) {
+      beginTutorRequest(lesson.ownerId, lesson.creator, lesson.id);
+    }
+
+    function updateBookingFormats() {
+      const lesson = lessons.find(item => item.id === document.getElementById("bookingLesson").value);
+      const formats = lesson ? (lesson.formats?.length ? lesson.formats : ["virtual"]) : ["virtual", "in-person"];
+      document.getElementById("bookingFormat").innerHTML = formats.map(format => {
+        const label = format === "in-person" ? `In person${lesson?.location ? ` · ${lesson.location}` : ""}` : "Online (video lesson)";
+        return `<option value="${escapeHTML(format)}">${escapeHTML(label)}</option>`;
+      }).join("");
+    }
+
+    function beginTutorRequest(teacherId, teacherName, lessonId = "") {
       const account = currentAccount();
       if (!account || account.role !== "learner") {
         if (!account) {
@@ -912,13 +1043,16 @@
         }
         return;
       }
-      requestedLessonId = lesson.id;
-      const offeredFormats = Array.isArray(lesson.formats) && lesson.formats.length ? lesson.formats : ["virtual"];
-      document.getElementById("bookingTutorName").textContent = `${lesson.creator} · ${lesson.title}`;
-      document.getElementById("bookingFormat").innerHTML = offeredFormats.map(format => {
-        const label = format === "in-person" ? `In person${lesson.location ? ` · ${lesson.location}` : ""}` : "Virtual";
-        return `<option value="${escapeHTML(format)}">${escapeHTML(label)}</option>`;
-      }).join("");
+      requestedTeacherId = teacherId;
+      const tutorLessons = lessons.filter(lesson => lesson.ownerId === teacherId);
+      document.getElementById("bookingLesson").innerHTML = [
+        ...tutorLessons.map(lesson => `<option value="${escapeHTML(lesson.id)}">${escapeHTML(lesson.title)}${lesson.price > 0 ? ` · ${escapeHTML(formatPrice(lesson))}` : " · Free"}</option>`),
+        '<option value="">Something else (describe it in your message)</option>'
+      ].join("");
+      document.getElementById("bookingLesson").value = lessonId || (tutorLessons[0]?.id ?? "");
+      document.getElementById("bookingLessonField").hidden = !tutorLessons.length;
+      updateBookingFormats();
+      document.getElementById("bookingTutorName").textContent = `Ask ${teacherName} for a lesson. Only you and the tutor can see this request.`;
       document.getElementById("bookingTime").value = "";
       document.getElementById("bookingMessage").value = "";
       closeDialog("lessonBackdrop");
@@ -1091,14 +1225,22 @@
       form.reset();
       form.elements.reportedId.value = button.dataset.reportUser;
       form.elements.lessonId.value = button.dataset.reportLesson || "";
-      document.getElementById("reportPersonName").textContent = button.dataset.reportName ? `Reporting ${button.dataset.reportName}. Only My Sign administrators see this report.` : "Only My Sign administrators see this report.";
+      const lessonReport = button.dataset.reportKind === "lesson";
+      document.getElementById("reportTitle").textContent = lessonReport ? "Report this lesson" : "Report a problem";
+      document.getElementById("reportReason").innerHTML = '<option value="" selected disabled>Choose a reason</option>' + (lessonReport ? LESSON_REPORT_REASONS : PERSON_REPORT_REASONS).map(reason => `<option value="${reason}">${REPORT_REASONS[reason]}</option>`).join("");
+      document.getElementById("reportPersonName").textContent = `${lessonReport ? "Reporting a lesson by" : "Reporting"} ${button.dataset.reportName || "this member"}. Only My Sign administrators see this report.`;
       closeDialog("lessonBackdrop");
       openDialog("reportBackdrop");
     }
     document.addEventListener("click", event => {
       const reportButton = event.target.closest("[data-report-user]");
       if (reportButton) openReport(reportButton);
+      const connectButton = event.target.closest("[data-connect-tutor]");
+      if (connectButton) beginTutorRequest(connectButton.dataset.connectTutor, connectButton.dataset.connectName);
+      if (event.target.closest("[data-open-publish]")) openPublish();
     });
+    document.getElementById("bookingLesson").addEventListener("change", updateBookingFormats);
+    document.getElementById("howGrid").innerHTML = howItWorksCard("learner") + howItWorksCard("teacher");
     document.getElementById("reportForm").addEventListener("submit", async event => {
       event.preventDefault();
       if (!requireDatabase() || !account) return;
@@ -1247,7 +1389,7 @@
           showToast(error.message);
           return;
         }
-        await db.storage.from(VIDEO_BUCKET).remove([lesson.videoPath]);
+        if (lesson.videoPath) await db.storage.from(VIDEO_BUCKET).remove([lesson.videoPath]);
         await loadAccountData();
         showToast("Lesson removed from your listings.");
         return;
@@ -1307,7 +1449,7 @@
         return;
       }
       setBusy(form, true);
-      const videoPaths = lessons.filter(lesson => lesson.ownerId === account.id).map(lesson => lesson.videoPath);
+      const videoPaths = lessons.filter(lesson => lesson.ownerId === account.id).map(lesson => lesson.videoPath).filter(Boolean);
       if (videoPaths.length) await db.storage.from(VIDEO_BUCKET).remove(videoPaths);
       if (account.avatarPath) await db.storage.from(AVATAR_BUCKET).remove([account.avatarPath]);
       const { error } = await db.rpc("delete_my_account");
@@ -1375,16 +1517,16 @@
     document.getElementById("bookingForm").addEventListener("submit", async event => {
       event.preventDefault();
       const account = currentAccount();
-      const lesson = lessonById(requestedLessonId);
-      if (!account || account.role !== "learner" || !lesson || lesson.example) {
-        showToast("Sign in as a learner to request this lesson.");
+      if (!account || account.role !== "learner" || !requestedTeacherId) {
+        showToast("Sign in as a learner to request a lesson.");
         return;
       }
       const form = event.currentTarget;
       const values = new FormData(form);
+      const lesson = lessons.find(item => item.id === String(values.get("lesson") || ""));
       const format = String(values.get("format"));
       const preferredTime = new Date(String(values.get("preferredTime")));
-      if (!(lesson.formats || ["virtual"]).includes(format)) {
+      if (lesson && !(lesson.formats || ["virtual"]).includes(format)) {
         showToast("Choose one of this tutor’s available formats.");
         return;
       }
@@ -1392,13 +1534,15 @@
         showToast("Choose a preferred date and time.");
         return;
       }
+      const message = String(values.get("message")).trim();
+      if (!lesson && !message) {
+        showToast("Write a short message so the tutor knows what you would like to learn.");
+        return;
+      }
       setBusy(form, true);
-      const { error } = await db.rpc("request_lesson", {
-        p_lesson_id: lesson.id,
-        p_format: format,
-        p_preferred_time: preferredTime.toISOString(),
-        p_message: String(values.get("message")).trim()
-      });
+      const { error } = lesson
+        ? await db.rpc("request_lesson", { p_lesson_id: lesson.id, p_format: format, p_preferred_time: preferredTime.toISOString(), p_message: message })
+        : await db.rpc("request_tutor", { p_teacher_id: requestedTeacherId, p_format: format, p_preferred_time: preferredTime.toISOString(), p_message: message });
       setBusy(form, false);
       if (error) {
         showToast(error.message);
@@ -1439,6 +1583,63 @@
       const button = event.target.closest("[data-open-lesson]");
       if (button) openLesson(lessonById(button.dataset.openLesson));
     });
+    function updateVideoSourceFields() {
+      const source = document.querySelector('#publishForm input[name="videoSource"]:checked').value;
+      document.getElementById("videoUploadField").hidden = source !== "upload";
+      document.getElementById("videoLinkField").hidden = source !== "youtube";
+    }
+    document.querySelectorAll('#publishForm input[name="videoSource"]').forEach(input => input.addEventListener("change", updateVideoSourceFields));
+
+    // Accepts youtu.be, youtube.com/watch, /shorts, /embed and /live links.
+    function youtubeIdFromUrl(text) {
+      try {
+        const url = new URL(text.trim());
+        const host = url.hostname.replace(/^www\.|^m\./, "");
+        let id = "";
+        if (host === "youtu.be") id = url.pathname.slice(1);
+        else if (host === "youtube.com" || host === "youtube-nocookie.com") id = url.searchParams.get("v") || url.pathname.split("/")[2] || "";
+        id = id.split("/")[0];
+        return /^[A-Za-z0-9_-]{11}$/.test(id) ? id : "";
+      } catch {
+        return "";
+      }
+    }
+
+    const VIDEO_TYPES = { "video/mp4": "mp4", "video/quicktime": "mov", "video/webm": "webm", "video/x-m4v": "m4v", "video/3gpp": "3gp" };
+    const VIDEO_TYPE_BY_EXTENSION = { mp4: "video/mp4", mov: "video/quicktime", webm: "video/webm", m4v: "video/x-m4v", "3gp": "video/3gpp" };
+    function videoTypeOf(file) {
+      if (VIDEO_TYPES[file.type]) return file.type;
+      return VIDEO_TYPE_BY_EXTENSION[(file.name.split(".").pop() || "").toLowerCase()] || "";
+    }
+
+    // Upload with XMLHttpRequest so the teacher can see progress on slow connections.
+    function uploadVideoWithProgress(path, file, contentType, onProgress) {
+      return new Promise((resolve, reject) => {
+        const request = new XMLHttpRequest();
+        request.open("POST", `${SUPABASE_URL}/storage/v1/object/${VIDEO_BUCKET}/${path}`);
+        request.setRequestHeader("apikey", SUPABASE_ANON_KEY);
+        request.setRequestHeader("Authorization", `Bearer ${session.access_token}`);
+        request.setRequestHeader("Content-Type", contentType);
+        request.setRequestHeader("x-upsert", "false");
+        request.upload.onprogress = event => { if (event.lengthComputable) onProgress(event.loaded / event.total); };
+        request.onload = () => {
+          if (request.status >= 200 && request.status < 300) return resolve();
+          let message = "Upload failed. Please try again.";
+          try { message = JSON.parse(request.responseText).message || message; } catch {}
+          reject(new Error(request.status === 413 ? "This video is larger than 50 MB." : message));
+        };
+        request.onerror = () => reject(new Error("The upload stopped. Check your internet connection and try again."));
+        request.send(file);
+      });
+    }
+
+    function setUploadProgress(fraction) {
+      const percent = Math.round(fraction * 100);
+      document.getElementById("uploadProgress").hidden = false;
+      document.getElementById("uploadBar").style.width = `${percent}%`;
+      document.getElementById("uploadText").textContent = percent < 100 ? `Uploading your video… ${percent}%. Keep this page open.` : "Finishing…";
+    }
+
     document.getElementById("lessonVideo").addEventListener("change", event => {
       const file = event.target.files[0];
       document.getElementById("videoLabel").textContent = file ? `${file.name} · ${(file.size / 1024 / 1024).toFixed(1)} MB` : "Choose a video to upload";
@@ -1468,22 +1669,32 @@
       const paid = values.get("access") === "paid";
       const price = Number(values.get("price"));
       const formats = values.getAll("formats").map(String);
-      const extension = video instanceof File ? ({ "video/mp4": "mp4", "video/webm": "webm", "video/quicktime": "mov" })[video.type] : "";
-      if (!(video instanceof File) || !video.size) { showToast("Choose a video file before publishing."); return; }
-      if (!extension) { showToast("Choose an MP4, WebM, or MOV video."); return; }
-      if (video.size > MAX_VIDEO_BYTES) { showToast("Videos can be up to 50 MB."); return; }
+      const useYoutube = values.get("videoSource") === "youtube";
+      const useUpload = values.get("videoSource") === "upload";
+      const youtubeId = useYoutube ? youtubeIdFromUrl(String(values.get("youtube") || "")) : "";
+      const videoType = useUpload && video instanceof File && video.size ? videoTypeOf(video) : "";
+      if (useYoutube && !youtubeId) { showToast("Paste a YouTube video link, like https://youtu.be/…"); return; }
+      if (useYoutube && paid) { showToast("YouTube links are for free lessons. For a paid lesson, upload the video instead."); return; }
+      if (useUpload && (!(video instanceof File) || !video.size)) { showToast("Choose a video file, or pick “No video” to post a live lesson."); return; }
+      if (useUpload && !videoType) { showToast("This video type is not supported. Use MP4, MOV, WebM, M4V, or 3GP."); return; }
+      if (useUpload && video.size > MAX_VIDEO_BYTES) { showToast(`This video is ${(video.size / 1024 / 1024).toFixed(0)} MB. The limit is 50 MB. Record in 720p, make it shorter, or use a YouTube link.`); return; }
       if (paid && (!Number.isFinite(price) || price < 1 || !values.get("currency"))) { showToast("Enter your price and choose a currency."); return; }
       if (!formats.length) { showToast("Choose virtual or in-person teaching."); return; }
       if (formats.includes("in-person") && !String(values.get("location")).trim()) { showToast("Add an area for in-person lessons."); return; }
 
       setBusy(form, true);
-      showToast("Uploading your video…");
-      const videoPath = `${account.id}/${crypto.randomUUID()}.${extension}`;
-      const upload = await db.storage.from(VIDEO_BUCKET).upload(videoPath, video, { contentType: video.type });
-      if (upload.error) {
-        setBusy(form, false);
-        showToast(`Video upload failed: ${upload.error.message}`);
-        return;
+      let videoPath = null;
+      if (useUpload) {
+        videoPath = `${account.id}/${crypto.randomUUID()}.${VIDEO_TYPES[videoType]}`;
+        setUploadProgress(0);
+        try {
+          await uploadVideoWithProgress(videoPath, video, videoType, setUploadProgress);
+        } catch (uploadError) {
+          setBusy(form, false);
+          document.getElementById("uploadProgress").hidden = true;
+          showToast(`Video upload failed: ${uploadError.message}`);
+          return;
+        }
       }
       const { error } = await db.from("lessons").insert({
         title: String(values.get("title")).trim(),
@@ -1495,11 +1706,13 @@
         access: paid ? "paid" : "free",
         formats,
         location: String(values.get("location") || "").trim(),
-        video_path: videoPath
+        video_path: videoPath,
+        youtube_id: youtubeId || null
       });
       setBusy(form, false);
+      document.getElementById("uploadProgress").hidden = true;
       if (error) {
-        await db.storage.from(VIDEO_BUCKET).remove([videoPath]);
+        if (videoPath) await db.storage.from(VIDEO_BUCKET).remove([videoPath]);
         showToast(error.message);
         return;
       }
@@ -1508,6 +1721,7 @@
       document.getElementById("lessonPrice").required = false;
       document.getElementById("lessonCurrency").required = false;
       updateMeetingLocationField();
+      updateVideoSourceFields();
       document.getElementById("videoLabel").textContent = "Choose a video to upload";
       closeDialog("publishBackdrop");
       dashboardTab = "lessons";
