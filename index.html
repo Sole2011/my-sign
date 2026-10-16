@@ -531,7 +531,7 @@
         <p><strong>What we collect.</strong> When you join: your name, email address, password (stored scrambled, never readable), country, and role. If you add them: a profile picture, city or area, topics, a short bio, lessons and videos you publish, lesson requests and messages, and (for teachers) the payment details you choose to share. We also keep reports members send us.</p>
         <p><strong>Why we use it.</strong> To create your account, show you tutors and learners in your country, let you request, accept, and hold lessons, send account emails (like confirming your email or resetting your password), and keep the community safe.</p>
         <p><strong>Who can see what.</strong> Members in your country can see your name, profile picture, role, city, topics, and bio. Your email address is shared only with the other person in a lesson request (a teacher sees the learner's email; a learner sees the teacher's email after the teacher accepts). Teacher payment details are shown only to learners whose request the teacher accepted. Members in other countries cannot see you. Reports are seen only by My Sign administrators.</p>
-        <p><strong>Services we use.</strong> Supabase stores accounts, lessons, and videos. Resend sends our emails. Video lessons happen on Jitsi Meet (meet.jit.si), which has its own privacy policy. The website is hosted on GitHub Pages and loads fonts from Google Fonts. These providers may store or process data outside Ethiopia, including in Europe and the United States.</p>
+        <p><strong>Services we use.</strong> Supabase stores accounts, lessons, and videos. Resend sends our emails. Video lessons happen on Jitsi Meet at meet.ffmuc.net, a free service run by Freifunk München in Germany, which has its own privacy policy. The website is hosted on GitHub Pages and loads fonts from Google Fonts. These providers may store or process data outside Ethiopia, including in Europe and the United States.</p>
         <p><strong>Payments.</strong> My Sign does not collect or store card or bank logins. Learners pay teachers directly using the details the teacher provides.</p>
         <p><strong>How long we keep it.</strong> We keep your information while your account is open. When you delete your account, we delete your profile, lessons, videos, and requests, except where we must keep something to handle a safety report or meet a legal obligation.</p>
         <p><strong>Your choices and rights.</strong> You can see and edit your profile at any time in your dashboard, and delete your account yourself under My profile → Delete account. You can also ask us for a copy of your information, to correct it, or to delete your account by emailing <a href="mailto:support@accessedsolution.com">support@accessedsolution.com</a>.</p>
@@ -555,6 +555,8 @@
     const db = SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
     const VIDEO_BUCKET = "lesson-videos";
     const AVATAR_BUCKET = "avatars";
+    // Public Jitsi server that lets anyone start a room without signing in (meet.jit.si requires a moderator login).
+    const VIDEO_HOST = "meet.ffmuc.net";
     const CONTACT_EMAIL = "support@accessedsolution.com";
     const REPORT_REASONS = { harassment: "Harassment or abuse", inappropriate: "Inappropriate content", fraud: "Scam or fraud", fake: "Fake profile", irrelevant: "Not a real sign language lesson", other: "Something else" };
     const LESSON_REPORT_REASONS = ["irrelevant", "inappropriate", "fraud", "other"];
@@ -712,7 +714,7 @@
     function videoRoomUrl(request) {
       const room = `MySign-Lesson-${request.id.replace(/-/g, "")}`;
       const displayName = JSON.stringify(currentAccount()?.name || "My Sign member");
-      return `https://meet.jit.si/${room}#userInfo.displayName=${encodeURIComponent(displayName)}&config.subject=${encodeURIComponent(JSON.stringify(request.lessonTitle))}`;
+      return `https://${VIDEO_HOST}/${room}#userInfo.displayName=${encodeURIComponent(displayName)}&config.subject=${encodeURIComponent(JSON.stringify(request.lessonTitle))}`;
     }
 
     function dashboardRequestRows(requests, teacherView) {
