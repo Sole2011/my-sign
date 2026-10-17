@@ -4,6 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f7f8f3">
+  <script>
+    // Always use the secure address (GitHub also redirects, but this works even before its cache updates).
+    if (location.protocol === "http:" && location.hostname !== "localhost" && location.hostname !== "127.0.0.1") location.replace(`https://${location.host}${location.pathname}${location.search}${location.hash}`);
+  </script>
   <title>My Sign | Find a Sign Language Tutor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
