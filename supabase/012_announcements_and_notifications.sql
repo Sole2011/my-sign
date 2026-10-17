@@ -103,7 +103,7 @@ begin
         'from', 'My Sign <no-reply@accessedsolution.com>',
         'to', jsonb_build_array(to_email),
         'subject', p_title,
-        'text', coalesce(p_body, '') || E'\n\nOpen My Sign: https://sole2011.github.io/my-sign/'
+        'text', coalesce(p_body, '') || E'\n\nOpen My Sign: https://sign.accessedsolution.com/'
              || E'\n\nYou get this email because email notifications are on in your My Sign profile. You can turn them off there.'
       )
     );
